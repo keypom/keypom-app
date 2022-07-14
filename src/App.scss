@@ -1,0 +1,37 @@
+* {
+    box-sizing: border-box;
+}
+
+img {
+    width: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+h1, h2, h3, h4 {
+    margin: 0 0 16px 0 !important;
+}
+
+main {
+	margin-top: 64px;
+    margin-left: 0;
+    padding: 16px;
+}
+
+#file-btn {
+    display: none;
+}
+
+/// not mobile
+@media only screen and (min-device-width: 550px) {
+    .columns:nth-child(odd) {
+        margin-left: 0;
+    }
+}
+@media only screen and (min-device-width: 768px) {
+	main {
+        margin-left: 256px;
+	}
+}
