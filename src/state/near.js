@@ -1,9 +1,11 @@
 import * as nearAPI from 'near-api-js';
 const { WalletAccount, KeyPair } = nearAPI
-import { near, connection, networkId, keyStore } from '../../utils/near-utils';
+import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format";
+import { near, connection, networkId, keyStore, accountSuffix } from '../../utils/near-utils';
 export { accountSuffix, networkId } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
-const { contractId } = getConfig();
+const { contractId: _contractId } = getConfig();
+export const contractId = _contractId
 
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
@@ -27,10 +29,19 @@ export const initNear = () => async ({ update }) => {
 	if (wallet.signedIn) {
 		account = wallet.account();
 		account.wallet = wallet
+
+		const balance = await viewMethod({
+			methodName: 'get_user_balance',
+			args: { account_id: account.accountId }
+		})
+		
+		account.contract = {
+			balance,
+			balanceFormatted: formatNearAmount(balance, 4)
+		}
 	}
 
 	await update('', { near, wallet, account });
-
 };
 
 export const accountExists = async (accountId) => {
@@ -59,4 +70,9 @@ export const getAccountWithMain = (accountId) => {
 	const account = new nearAPI.Account(connection, accountId);
 	keyStore.setKey(networkId, accountId, KeyPair.fromString(parseSeedPhrase(getAppData().seedPhrase).secretKey))
 	return account
+}
+
+export const viewMethod = ({ contractId: _contractId, methodName, args }) => {
+	const account = new nearAPI.Account(connection, accountSuffix.substring(1));
+	return account.viewFunction(_contractId || contractId, methodName, args)
 }
