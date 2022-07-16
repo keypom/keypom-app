@@ -11,6 +11,7 @@ import { Sidebar } from './components/Sidebar';
 import { Deploy } from './components/Deploy';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
+import { Loading } from './components/Loading';
 
 import './css/normalize.css';
 import './css/skeleton.css';
@@ -20,7 +21,7 @@ const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
 	const { app, wallet, account } = state
-	const { menu } = app
+	const { menu, loading } = app
 	const { pathname } = useLocation();
 
 	const onMount = () => {
@@ -34,6 +35,7 @@ const App = () => {
 
 	return (
 		<div>
+			{ loading && <Loading /> }
 			<Header {...{ pathname, menu, account, update }} />
 			<Sidebar {...{ pathname, account, update }} />
 			{

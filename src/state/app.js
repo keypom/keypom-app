@@ -9,6 +9,7 @@ const initialState = {
 	app: {
 		mounted: false,
 		menu: false,
+		loading: false,
 		data: get(APP_DATA)
 	},
 };

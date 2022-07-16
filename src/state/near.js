@@ -72,7 +72,7 @@ export const getAccountWithMain = (accountId) => {
 	return account
 }
 
-export const viewMethod = ({ contractId: _contractId, methodName, args }) => {
+export const viewMethod = ({ contractId: _contractId, methodName, args = {} }) => {
 	const account = new nearAPI.Account(connection, accountSuffix.substring(1));
 	return account.viewFunction(_contractId || contractId, methodName, args)
 }

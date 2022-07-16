@@ -1,0 +1,31 @@
+@keyframes spin {
+	from {
+		transform: rotateY(0deg);
+	}
+
+	to {
+		transform: rotateY(360deg);
+	}
+}
+
+.modal-overlay {
+	background: rgba(0, 0, 0, 0.5);
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 999999999;
+	text-align: center;
+}
+
+.modal-overlay > img {
+	margin: auto;
+	margin-top: 64px;
+	width: 200px;
+	filter: drop-shadow(2px 0 0 white) drop-shadow(0 1px 0 white) drop-shadow(-2px 0 0 white) drop-shadow(0 -1px 0 white);
+	animation-name: spin;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
