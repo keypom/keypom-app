@@ -51,6 +51,7 @@ const App = () => {
 							<Route path="/deploy" element={<Deploy {...routeArgs} />} />
 							<Route path="/create" element={<Create {...routeArgs} />} />
 							<Route path="/drops" element={<Drops {...routeArgs} />} />
+							<Route path="/drops/:which" element={<Drops {...routeArgs} />} />
 							<Route path="/contracts" element={<Contracts {...routeArgs} />} />
 							<Route path="/" element={<Home {...routeArgs} />} />
 						</Routes>

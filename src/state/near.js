@@ -4,7 +4,7 @@ import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format"
 import { near, connection, networkId, keyStore, accountSuffix } from '../../utils/near-utils';
 export { accountSuffix, networkId } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
-import { genKeys } from './drops'
+import { matchKeys } from './drops'
 const { contractId: _contractId } = getConfig();
 export const contractId = _contractId
 
@@ -53,7 +53,7 @@ export const initNear = () => async ({ update, getState }) => {
 				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
 				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
 				const { seedPhrase } = getState().app.data
-				drop.keyPairs = await genKeys(seedPhrase, drop.keys.length, drop.drop_id)
+				drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
 			}
 			
 			contract = {
@@ -96,6 +96,12 @@ export const getState = async (accountId) => {
 export const getAccountWithMain = (accountId) => {
 	const account = new nearAPI.Account(connection, accountId);
 	keyStore.setKey(networkId, accountId, KeyPair.fromString(parseSeedPhrase(getAppData().seedPhrase).secretKey))
+	return account
+}
+
+export const getClaimAccount = (secretKey) => {
+	const account = new nearAPI.Account(connection, contractId);
+	keyStore.setKey(networkId, contractId, KeyPair.fromString(secretKey))
 	return account
 }
 
