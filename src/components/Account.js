@@ -27,10 +27,10 @@ const ImportAppData = ({ update }) => <button onClick={() => {
 	fileBtn.click()
 }}>Import App Data</button>
 
-export const Account = ({ update, account }) => {
+export const Account = ({ update, account, contract }) => {
 
 	const appData = getAppData()
-	const { balanceFormatted } = account.contract
+	const { balanceFormatted } = contract
 
 	const handleAddDeposit = () => {
 		const howMuch = window.prompt('How much (in NEAR) would you like to add to your account?')

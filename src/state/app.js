@@ -31,6 +31,15 @@ export const insertAppDataArr = (update, k, v) => {
 	update('app.data', appData)
 }
 
+export const removeAppDataArr = (update, k, v) => {
+	const appData = getAppData()
+	if (!appData[k]) return
+	const newArr = appData[k].filter((el) => el !== v)
+	appData[k] = newArr
+	set(APP_DATA, appData)
+	update('app.data', appData)
+}
+
 export const setAppData = (update, data) => {
 	set(APP_DATA, data)
 	update('app.data', data)

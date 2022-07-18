@@ -20,8 +20,40 @@ main {
     padding: 16px;
 }
 
+.button-warning, .button-warning:hover {
+    background-color: #ec2046;
+    border-color: #ec2046;
+    color: white;
+    &:hover {
+        background-color: #bb2836;
+    }
+}
+
 button {
-    margin-right: 16px !important
+    margin-right: 16px !important;
+}
+
+.spacer {
+    margin-bottom: 16px;
+}
+
+.row.sm {
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    .six.columns {
+        width: 50%;
+        &:nth-child(odd) {
+            padding-right: 4px;
+        }
+        &:nth-child(even) {
+            padding-left: 4px;
+        }
+    }
+    p, button {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+    }
 }
 
 #file-btn {

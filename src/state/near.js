@@ -4,13 +4,14 @@ import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format"
 import { near, connection, networkId, keyStore, accountSuffix } from '../../utils/near-utils';
 export { accountSuffix, networkId } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
+import { genKeys } from './drops'
 const { contractId: _contractId } = getConfig();
 export const contractId = _contractId
 
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
 
-export const initNear = () => async ({ update }) => {
+export const initNear = () => async ({ update, getState }) => {
 
 	const wallet = new WalletAccount(near)
 
@@ -25,23 +26,49 @@ export const initNear = () => async ({ update }) => {
 
 	wallet.signedIn = wallet.isSignedIn();
     
-	let account;
+	let account, contract;
 	if (wallet.signedIn) {
 		account = wallet.account();
-		account.wallet = wallet
+		// account.wallet = wallet
 
-		const balance = await viewMethod({
-			methodName: 'get_user_balance',
-			args: { account_id: account.accountId }
-		})
-		
-		account.contract = {
-			balance,
-			balanceFormatted: formatNearAmount(balance, 4)
+		account.update = async (autoUpdate = true) => {
+			const balance = await viewMethod({
+				methodName: 'get_user_balance',
+				args: { account_id: account.accountId }
+			})
+	
+			const drops = await viewMethod({
+				methodName: 'drops_for_funder',
+				args: { account_id: account.accountId }
+			})
+			
+			for (drop of drops) {
+				const keys = await viewMethod({
+					methodName: 'get_keys_for_drop',
+					args: { drop_id: drop.drop_id }
+				})
+				drop.keys = keys.map(({ pk }) => pk)
+
+
+				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
+				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
+				const { seedPhrase } = getState().app.data
+				drop.keyPairs = await genKeys(seedPhrase, drop.keys.length, drop.drop_id)
+			}
+			
+			contract = {
+				drops,
+				balance,
+				balanceFormatted: formatNearAmount(balance, 4)
+			}
+
+			if (autoUpdate) update('', { contract })
 		}
+		
+		await account.update(false)
 	}
 
-	await update('', { near, wallet, account });
+	await update('', { near, wallet, account, contract });
 };
 
 export const accountExists = async (accountId) => {

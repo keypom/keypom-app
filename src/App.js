@@ -8,6 +8,9 @@ import {
 import { appStore, onAppMount } from './state/app';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
+import { Contracts } from './components/Contracts';
+import { Drops } from './components/Drops';
+import { Create } from './components/Create';
 import { Deploy } from './components/Deploy';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
@@ -20,7 +23,7 @@ import './App.scss';
 const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
-	const { app, wallet, account } = state
+	const { app, wallet, account, contract } = state
 	const { menu, loading } = app
 	const { pathname } = useLocation();
 
@@ -30,7 +33,7 @@ const App = () => {
 	useEffect(onMount, []);
 
 	const routeArgs = {
-		state, update, account
+		state, update, account, contract
 	}
 
 	return (
@@ -46,6 +49,9 @@ const App = () => {
 							<Route path="/account" element={<Account {...routeArgs} />} />
 							<Route path="/deploy/:what" element={<Deploy {...routeArgs} />} />
 							<Route path="/deploy" element={<Deploy {...routeArgs} />} />
+							<Route path="/create" element={<Create {...routeArgs} />} />
+							<Route path="/drops" element={<Drops {...routeArgs} />} />
+							<Route path="/contracts" element={<Contracts {...routeArgs} />} />
 							<Route path="/" element={<Home {...routeArgs} />} />
 						</Routes>
 					</main>

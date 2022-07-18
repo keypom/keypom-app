@@ -12,7 +12,9 @@ const Links = ({ update, account }) => {
 		{/* <Link onClick={hideMenu} to="/about">About</Link> */}
 		{
 			account ? <>
+				<Link onClick={hideMenu} to="/create">Create</Link>
 				<Link onClick={hideMenu} to="/drops">Drops</Link>
+				<Link onClick={hideMenu} to="/contracts">Contracts</Link>
 				<Link onClick={hideMenu} to="/deploy">Deploy</Link>
 				<Link onClick={hideMenu} to="/account">Account</Link>
 			</>
