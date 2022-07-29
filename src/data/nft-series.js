@@ -1,11 +1,11 @@
-export const nftSimple = {
-	wasm: 'nft.wasm',
+export const nftSeries = {
+	wasm: 'nft-series.wasm',
 	form: {
 		contract_id: '',
 	},
 	args: {
 		owner_id: '',
-		spec: 'nft-1.0.0',
+		spec: 'nft-1.0.99',
 		name: '',
 		symbol: '',
 		// icon: '_',

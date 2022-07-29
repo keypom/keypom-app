@@ -11,6 +11,10 @@ export const contractId = _contractId
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
 
+const dropTypeMap = {
+	FC: 'Function Call Drop'
+}
+
 export const initNear = () => async ({ update, getState }) => {
 
 	const wallet = new WalletAccount(near)
@@ -32,23 +36,25 @@ export const initNear = () => async ({ update, getState }) => {
 		// account.wallet = wallet
 
 		account.update = async (autoUpdate = true) => {
-			const balance = await viewMethod({
-				methodName: 'get_user_balance',
-				args: { account_id: account.accountId }
-			})
+			const balance = await view('get_user_balance', { account_id: account.accountId })
 	
-			const drops = await viewMethod({
-				methodName: 'drops_for_funder',
-				args: { account_id: account.accountId }
-			})
+			const drops = await view('drops_for_funder', { account_id: account.accountId })
 			
 			for (drop of drops) {
-				const keys = await viewMethod({
-					methodName: 'get_keys_for_drop',
-					args: { drop_id: drop.drop_id }
-				})
-				drop.keys = keys.map(({ pk }) => pk)
-
+				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
+				
+				try {
+					drop.keySupply = await view('key_supply_for_drop', { drop_id: drop.drop_id })
+				} catch (e) {
+					console.log(e)
+				}
+				if (drop.keySupply > 0) {
+					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
+					drop.keys = keys.map(({ pk }) => pk)
+				} else {
+					drop.keys = []
+				}
+				/// TODO this has been updated with the drop nonce
 
 				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
 				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
@@ -109,3 +115,15 @@ export const viewMethod = ({ contractId: _contractId, methodName, args = {} }) =
 	const account = new nearAPI.Account(connection, accountSuffix.substring(1));
 	return account.viewFunction(_contractId || contractId, methodName, args)
 }
+
+export const view = (methodName, args) => {
+	const account = new nearAPI.Account(connection, accountSuffix.substring(1));
+	return account.viewFunction(contractId, methodName, args)
+}
+
+export const call = (account, methodName, args) => account.functionCall({
+	contractId,
+	methodName,
+	args,
+	gas: '100000000000000',
+})

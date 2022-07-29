@@ -6,7 +6,6 @@ import { handleDeploy } from '../state/deploy'
 import { contractId, accountExists, accountSuffix, txStatus, getState, getAccountWithMain, viewMethod } from "../state/near";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-import wasm from 'url:../data/main.wasm'
 const DEPLOY = `__DEPLOY`
 
 export const checkDeploy = async ({ state, account, update }) => {

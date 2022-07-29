@@ -17,6 +17,7 @@ export const SidebarLinks = ({ pathname, update, account }) => {
 		case 'deploy':
 			return <nav>
 				<Link onClick={hideMenu} to="/deploy/nft">NFT</Link>
+				<Link to="/deploy/nft-series">Deploy NFT Series</Link>
 			</nav>
 		default:
 			return <nav>

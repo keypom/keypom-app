@@ -21,7 +21,7 @@ export const Drops = ({ state, update, contract, account }) => {
 		onMount()
 	}, [])
 
-	const handleRemoveDrop = async () => {
+	const handleRemoveDrop = async (drop_id) => {
 		update('app.loading', true)
 		try {
 			const res = await account.functionCall({
@@ -32,7 +32,6 @@ export const Drops = ({ state, update, contract, account }) => {
 				},
 				gas: '100000000000000',
 			})
-				
 		} catch(e) {
 			update('app.loading', false)
 			throw e
@@ -52,30 +51,36 @@ export const Drops = ({ state, update, contract, account }) => {
 					<button onClick={async () => {
 						update('app.loading', true)
 						const num = window.prompt(`How many keys would you like to add to the drop?`)
-						const res = await addKeys(seedPhrase, account, drop.drop_id, parseInt(num), drop.keys.length)
+						if (!num) return update('app.loading', false)
+						const res = await addKeys(seedPhrase, account, drop, parseInt(num))
 						console.log(res)
 						await account.update()
 						update('app.loading', false)
 					}}>Add Keys</button>
 				</div>
 				<div className="six columns">
-					<button onClick={handleRemoveDrop}>Remove Drop</button>
+					<button onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
 				</div>
 			</div>
-			<h4>Keys</h4>
+			<h4>Keys { drop.keySupply }</h4>
 			{
 				drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
 					<div className="row sm">
+						<div className="twelve columns">
+						<p>{secretKey.substring(0, 32)}</p>
+						</div>
+					</div>
+					<div className="row sm">
 						<div className="six columns">
-						<p>{secretKey.substring(0, 17)}</p>
+							<Link to={`/claim/${secretKey}`}><button>Preview Drop</button></Link>
 						</div>
 						<div className="six columns">
-						<button onClick={async () => {
-							update('app.loading', true)
-							await claimDrop(account.accountId, secretKey)
-							await account.update()
-							update('app.loading', false)
-						}}>Claim Drop</button>
+							<button onClick={async () => {
+								update('app.loading', true)
+								await claimDrop(account.accountId, secretKey)
+								await account.update()
+								update('app.loading', false)
+							}}>Claim Drop</button>
 						</div>
 					</div>
 				</div>)
@@ -91,13 +96,13 @@ export const Drops = ({ state, update, contract, account }) => {
 	}
 
 	{
-		drops.map(({ drop_id, balance, drop_type }) => <div key={drop_id}>
+		drops.map(({ drop_id, balance, drop_type_label }) => <div key={drop_id}>
 			<div className="row sm">
 				<div className="six columns">
 					<p>Drop ID: {drop_id}</p>
 				</div>
 				<div className="six columns">
-					<p>{drop_type}</p>
+					<p>{drop_type_label}</p>
 				</div>
 			</div>
 			<div className="row sm">
@@ -107,7 +112,7 @@ export const Drops = ({ state, update, contract, account }) => {
 					</Link>
 				</div>
 				<div className="six columns">
-					<button onClick={handleRemoveDrop}>Remove Drop</button>
+					<button onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
 				</div>
 			</div>
 		</div>)

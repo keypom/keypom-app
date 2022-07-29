@@ -27,7 +27,7 @@ const ImportAppData = ({ update }) => <button onClick={() => {
 	fileBtn.click()
 }}>Import App Data</button>
 
-export const Account = ({ update, account, contract }) => {
+export const Account = ({ update, account, wallet, contract }) => {
 
 	const appData = getAppData()
 	const { balanceFormatted } = contract
@@ -53,7 +53,7 @@ export const Account = ({ update, account, contract }) => {
 
 	return <>
 		<h4>{account.accountId}</h4>
-		<button onClick={() => account.wallet.signOut()}>Sign Out</button>
+		<button onClick={() => wallet.signOut()}>Sign Out</button>
 
 		<h4>Balance {balanceFormatted}</h4>
 		<button onClick={handleAddDeposit}>Add Deposit</button>

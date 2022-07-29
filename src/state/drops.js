@@ -1,19 +1,20 @@
 import * as nearAPI from 'near-api-js';
 const { KeyPair } = nearAPI
 import { parseSeedPhrase, generateSeedPhrase } from "near-seed-phrase"
-import { contractId, getClaimAccount } from './near'
+import { view, contractId, getClaimAccount } from './near'
 
 const hashBuf = (str) => crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
 
-export const addKeys = async (seedPhrase, account, drop_id, num, nonce = 0) => {
-	const keys = await genKeys(seedPhrase, num, drop_id, nonce)
+export const addKeys = async (seedPhrase, account, drop, num) => {
+	const { drop_id } = drop
+	const keys = await genKeys(seedPhrase, num, drop_id, drop.next_key_nonce)
 	args = {
 		drop_id,
 		public_keys: keys.map(({ publicKey }) => publicKey.toString()),
 	}
 	const res = await account.functionCall({
 		contractId,
-		methodName: 'add_to_drop',
+		methodName: 'add_keys',
 		args,
 		gas: '100000000000000',
 	})
@@ -44,9 +45,10 @@ export const genKeys = async (seedPhrase, num, drop_id, nonce = 0) => {
 	return keys
 }
 
-export const matchKeys = async (seedPhrase, drop_id, keys, nonce = 0, limit = 1000) => {
+export const matchKeys = async (seedPhrase, drop_id, keys, nonce = 0, limit = 50) => {
 	const { secretKey } = parseSeedPhrase(seedPhrase)
 	const keyPairs = []
+	if (keys.length === 0) return keyPairs
 	for (let i = nonce; i < nonce + limit; i++) {
 		const hash = await hashBuf(`${secretKey}_${drop_id}_${i}`)
 		const { secretKey: s } = generateSeedPhrase(hash)

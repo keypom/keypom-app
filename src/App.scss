@@ -18,6 +18,9 @@ main {
 	margin-top: 64px;
     margin-left: 0;
     padding: 16px;
+    &.claim {
+        margin-top: 0;
+    }
 }
 
 .button-warning, .button-warning:hover {
@@ -37,9 +40,13 @@ button {
     margin-bottom: 16px;
 }
 
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .row.sm {
     margin: 0 0 8px 0;
-    display: flex;
     align-items: center;
     .six.columns {
         width: 50%;
@@ -64,6 +71,12 @@ button {
 @media only screen and (min-device-width: 550px) {
     .columns:nth-child(odd) {
         margin-left: 0;
+    }
+    .row.sm {
+        .six.columns {
+            width: 48%;
+            padding: 0 !important;
+        }
     }
 }
 @media only screen and (min-device-width: 768px) {

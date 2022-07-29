@@ -12,6 +12,7 @@ import { Contracts } from './components/Contracts';
 import { Drops } from './components/Drops';
 import { Create } from './components/Create';
 import { Deploy } from './components/Deploy';
+import { Claim } from './components/Claim';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
 import { Loading } from './components/Loading';
@@ -33,11 +34,20 @@ const App = () => {
 	useEffect(onMount, []);
 
 	const routeArgs = {
-		state, update, account, contract
+		state, update, account, wallet, contract
+	}
+
+	if (/claim/.test(pathname)) {
+		return <main className="claim">
+			{ loading && <Loading /> }
+			<Routes>
+				<Route path="/claim/:secretKey" element={<Claim {...routeArgs} />} />
+			</Routes>
+		</main>
 	}
 
 	return (
-		<div>
+		<>
 			{ loading && <Loading /> }
 			<Header {...{ pathname, menu, account, update }} />
 			<Sidebar {...{ pathname, account, update }} />
@@ -76,7 +86,7 @@ const App = () => {
 			}
 
 			<input type="file" id="file-btn" />
-		</div>
+		</>
 	);
 };
 
