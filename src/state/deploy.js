@@ -6,16 +6,25 @@ import { handleDeploy } from '../state/deploy'
 import { contractId, accountExists, accountSuffix, txStatus, getState, getAccountWithMain, viewMethod } from "../state/near";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
+import { nftSimple } from "../data/nft-simple";
+import { nftSeries } from "../data/nft-series";
+
+export const contracts = {
+	nftSimple,
+	nftSeries,
+}
+
+export const contractBySpec = (spec) => Object.values(contracts).find(({ form: { __spec } }) => __spec === spec)
+
 const DEPLOY = `__DEPLOY`
 
 export const checkDeploy = async ({ state, account, update }) => {
 	
 	const deploy = get(DEPLOY)
-	if (!deploy) return
+	if (!deploy) return update('app.loading', false)
 
 	const { new_account_id, new_public_key, values } = deploy
 	const { contracts } = state.app.data
-	console.log(contracts)
 
 	/// check if contract account was created yet
 
@@ -34,13 +43,14 @@ export const checkDeploy = async ({ state, account, update }) => {
 			if (!/no drop/gi.test(e.toString())) {
 				throw e
 			}
+
 			await account.functionCall({
 				contractId,
 				methodName: `create_drop`,
 				gas: '100000000000000',
 				args: {
 					public_keys: [new_public_key],
-					balance: parseNearAmount('3.5'),
+					balance: parseNearAmount(values.NEAR.toString() || '5'),
 					drop_config: {
 						max_claims_per_key: 1,
 					}
@@ -81,7 +91,8 @@ export const checkDeploy = async ({ state, account, update }) => {
 
 	const contractState = await getState(new_account_id)
 	if (!contractState.code_hash) {
-		const bytes = await fetch(wasm).then((res) => res.arrayBuffer())
+		const whichContract = contractBySpec(values.spec)
+		const bytes = await fetch(whichContract.wasm).then((res) => res.arrayBuffer())
 		const contractAccount = getAccountWithMain(new_account_id)
 		await contractAccount.deployContract(new Uint8Array(bytes))
 	}
@@ -113,6 +124,8 @@ export const checkDeploy = async ({ state, account, update }) => {
 
 		del(DEPLOY)
 	}
+	
+	update('app.loading', false)
 }
 
 export const handleDeploy = async ({ seedPhrase, values }) => {
@@ -128,8 +141,12 @@ export const handleDeploy = async ({ seedPhrase, values }) => {
 	// 	return alert(e)
 	// }
 
+	// __spec was a hidden field in values
+	values.spec = values.__spec
+
 	const new_account_id = values.contract_id + accountSuffix
 	if (await accountExists(new_account_id)) {
+		update('app.loading', false)
 		return alert(`Account ${new_account_id} exists. Try again!`)
 	}
 	const new_public_key = parseSeedPhrase(seedPhrase).publicKey.toString()

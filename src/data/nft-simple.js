@@ -1,16 +1,15 @@
 export const nftSimple = {
-	wasm: 'nft.wasm',
+	wasm: '/nft-simple.wasm',
 	form: {
 		contract_id: '',
-	},
-	args: {
+		NEAR: 5,
 		owner_id: '',
-		spec: 'nft-1.0.0',
+		__spec: 'nft-1.0.0',
 		name: '',
 		symbol: '',
 		// icon: '_',
 		// base_uri: '_',
 		// reference: '_',
 		// reference_hash: '_',
-	}
+	},
 }

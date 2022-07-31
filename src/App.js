@@ -63,6 +63,7 @@ const App = () => {
 							<Route path="/drops" element={<Drops {...routeArgs} />} />
 							<Route path="/drops/:which" element={<Drops {...routeArgs} />} />
 							<Route path="/contracts" element={<Contracts {...routeArgs} />} />
+							<Route path="/contracts/:which" element={<Contracts {...routeArgs} />} />
 							<Route path="/" element={<Home {...routeArgs} />} />
 						</Routes>
 					</main>

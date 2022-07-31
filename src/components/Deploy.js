@@ -5,9 +5,10 @@ import {
 } from "react-router-dom";
 
 import { Form } from "./Form";
-import { nftSimple } from "../data/nft";
-import { nftSeries } from "../data/nft-series";
 import { handleDeploy, checkDeploy } from '../state/deploy'
+
+import { contracts } from "../state/deploy"
+const { nftSimple, nftSeries } = contracts
 
 export const Deploy = ({ state, update, account }) => {
 
@@ -16,16 +17,13 @@ export const Deploy = ({ state, update, account }) => {
 	const [searchParams] = useSearchParams();
 
 	const onMount = async () => {
-
 		const { contracts } = state.app.data
-		console.log(contracts)
-		
 		await checkDeploy({ state, update, account })
 	}
 	useEffect(() => {
 		onMount()
 	}, [])
-	
+
 	if (!seedPhrase) {
 		return <>
 			<p>Please set up your app data first</p>
@@ -34,7 +32,7 @@ export const Deploy = ({ state, update, account }) => {
 	}
 
 	switch (what) {
-		case 'nft':
+		case 'nft-simple':
 			return <div>
 				<Form {...{
 					data: {
@@ -43,10 +41,13 @@ export const Deploy = ({ state, update, account }) => {
 						owner_id: account.accountId,
 					},
 					submit: async (values) => {
+						update('app.loading', true)
 						await handleDeploy({ seedPhrase, values })
 						await checkDeploy({ state, update, account })
-					}
-				 }} />
+						update('app.loading', false)
+					},
+					submitLabel: 'Deploy',
+				}} />
 			</div>
 			break;
 		case 'nft-series':
@@ -58,15 +59,18 @@ export const Deploy = ({ state, update, account }) => {
 						owner_id: account.accountId,
 					},
 					submit: async (values) => {
+						update('app.loading', true)
 						await handleDeploy({ seedPhrase, values })
 						await checkDeploy({ state, update, account })
-					}
-					}} />
+						update('app.loading', false)
+					},
+					submitLabel: 'Deploy',
+				}} />
 			</div>
 			break;
 		default:
 			return <div>
-				<Link to="/deploy/nft"><button>Deploy NFT</button></Link>
+				<Link to="/deploy/nft-simple"><button>Deploy NFT Simple</button></Link>
 				<Link to="/deploy/nft-series"><button>Deploy NFT Series</button></Link>
 			</div>
 	}

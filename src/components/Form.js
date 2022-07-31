@@ -20,6 +20,7 @@ const genFields = (data, values, onChange) => {
 			input.type = 'checkbox'
 			input.checked = values[k]
 		}
+		
 		return <div className="six columns" key={data.__ID + k}>
 			<label htmlFor={k}>{k}</label>
 			<input {...input} />
@@ -27,7 +28,7 @@ const genFields = (data, values, onChange) => {
 	})
 }
 
-export const Form = ({ data, onChange, submit }) => {
+export const Form = ({ data, onChange, submit, submitLabel }) => {
 
 	const [values, setValues] = useState({ ...data })
 	const onValueChange = (k, v) => {
@@ -40,6 +41,6 @@ export const Form = ({ data, onChange, submit }) => {
 		<div className="row">
 			{genFields(data, values, onValueChange)}
 		</div>
-		{ submit && <button className="button-primary" onClick={() => submit(values)}>Submit</button> }
+		{ submit && <button className="button-primary" onClick={() => submit(values)}>{ submitLabel ? submitLabel : 'Submit' }</button> }
 	</>
 }
