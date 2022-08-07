@@ -4,17 +4,17 @@ import {
 	Link, useParams, useSearchParams
 } from "react-router-dom";
 import { Form } from "./Form";
-import { viewMethod } from '../state/near'
+import { viewMethod, gas } from '../state/near'
 import { explorerLink, addContract, removeContract } from "../state/contracts";
 
 import { contracts, contractBySpec } from "../state/deploy"
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-export const Contracts = ({ state, update, account }) => {
+export const Contracts = ({ state, update, wallet }) => {
 
 	const [interact, setInteract] = useState()
 	const { contracts } = state.app?.data
 	const { which } = useParams()
-
 
 	const onMount = async () => {
 		if (!which) return
@@ -23,6 +23,8 @@ export const Contracts = ({ state, update, account }) => {
 			const metadata = await viewMethod({ contractId: which, methodName: 'nft_metadata' })
 			if (!metadata) return
 			contract = contractBySpec(metadata.spec)
+
+			const series = await viewMethod({ contractId: which, methodName: 'nft_metadata' })
 			if (!contract) return
 		} catch (e) {
 			console.warn(e)
@@ -32,7 +34,7 @@ export const Contracts = ({ state, update, account }) => {
 	}
 	useEffect(() => {
 		onMount()
-	}, [])
+	}, [which])
 
 	if (which) {
 		if (!interact) return <p>Cannot find contract by spec or interaction data</p>
@@ -45,8 +47,21 @@ export const Contracts = ({ state, update, account }) => {
 						<p>{k}</p>
 						<Form {...{
 							data: v.form,
-							submit: (values) => {
+							submit: async (values) => {
 								console.log(values)
+
+								const res = await wallet.functionCall({
+									contractId: which,
+									methodName: k,
+									args: {
+										id: values.id,
+										metadata: {
+											media: values.media
+										}
+									},
+									attachedDeposit: parseNearAmount('0.1'),
+									gas
+								})
 							},
 							submitLabel: `Call ${k} Method`
 						}} />

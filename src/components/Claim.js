@@ -9,7 +9,7 @@ import {
 	Link, useParams,
 } from "react-router-dom";
 
-export const Claim = ({ state, update, account }) => {
+export const Claim = ({ state, update, wallet }) => {
 	const { secretKey } = useParams()
 
 	const [keyPair, setKeyPair] = useState({})
@@ -40,7 +40,7 @@ export const Claim = ({ state, update, account }) => {
 		if (_keyInfo.key_info.num_uses === 2) {
 			update('app.loading', true)
 			const account = await getClaimAccount(_keyPair.secretKey)
-			const res = await call(account, 'claim', { account_id: `testnet` })
+			const res = await call(wallet, 'claim', { account_id: `testnet` })
 			console.log(res)
 			update('app.loading', false)
 		}

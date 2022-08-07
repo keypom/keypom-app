@@ -10,7 +10,7 @@ import { handleDeploy, checkDeploy } from '../state/deploy'
 import { contracts } from "../state/deploy"
 const { nftSimple, nftSeries } = contracts
 
-export const Deploy = ({ state, update, account }) => {
+export const Deploy = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
 	const { what } = useParams()
@@ -18,7 +18,7 @@ export const Deploy = ({ state, update, account }) => {
 
 	const onMount = async () => {
 		const { contracts } = state.app.data
-		await checkDeploy({ state, update, account })
+		await checkDeploy({ state, update, wallet })
 	}
 	useEffect(() => {
 		onMount()
@@ -38,12 +38,12 @@ export const Deploy = ({ state, update, account }) => {
 					data: {
 						...nftSimple.form,
 						...nftSimple.args,
-						owner_id: account.accountId,
+						owner_id: wallet.accountId,
 					},
 					submit: async (values) => {
 						update('app.loading', true)
 						await handleDeploy({ seedPhrase, values })
-						await checkDeploy({ state, update, account })
+						await checkDeploy({ state, update, wallet })
 						update('app.loading', false)
 					},
 					submitLabel: 'Deploy',
@@ -56,12 +56,12 @@ export const Deploy = ({ state, update, account }) => {
 					data: {
 						...nftSeries.form,
 						...nftSeries.args,
-						owner_id: account.accountId,
+						owner_id: wallet.accountId,
 					},
 					submit: async (values) => {
 						update('app.loading', true)
 						await handleDeploy({ seedPhrase, values })
-						await checkDeploy({ state, update, account })
+						await checkDeploy({ state, update, wallet })
 						update('app.loading', false)
 					},
 					submitLabel: 'Deploy',

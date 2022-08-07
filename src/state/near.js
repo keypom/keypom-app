@@ -6,75 +6,76 @@ export { accountSuffix, networkId } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
 import { matchKeys } from './drops'
 const { contractId: _contractId } = getConfig();
-export const contractId = _contractId
-
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
+import { getSelector, getAccount, viewFunction, functionCall } from '../utils/wallet-selector-compat'
+
+export const contractId = _contractId
+export const gas = '100000000000000';
 
 const dropTypeMap = {
 	FC: 'Function Call Drop'
 }
 
 export const initNear = () => async ({ update, getState }) => {
-
-	const wallet = new WalletAccount(near)
-
-	wallet.signIn = () => {
-		wallet.requestSignIn(contractId, 'Blah Blah');
-	};
-	const signOut = wallet.signOut;
-	wallet.signOut = () => {
-		signOut.call(wallet);
-		update('', { account: null });
-	};
-
-	wallet.signedIn = wallet.isSignedIn();
-    
-	let account, contract;
-	if (wallet.signedIn) {
-		account = wallet.account();
-		// account.wallet = wallet
-
-		account.update = async (autoUpdate = true) => {
-			const balance = await view('get_user_balance', { account_id: account.accountId })
 	
-			const drops = await view('drops_for_funder', { account_id: account.accountId })
-			
-			for (drop of drops) {
-				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
-				
-				try {
-					drop.keySupply = await view('key_supply_for_drop', { drop_id: drop.drop_id })
-				} catch (e) {
-					console.log(e)
-				}
-				if (drop.keySupply > 0) {
-					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
-					drop.keys = keys.map(({ pk }) => pk)
-				} else {
-					drop.keys = []
-				}
-				/// TODO this has been updated with the drop nonce
+	const updateAccount = async () => {
+		const account = await getAccount()
 
-				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
-				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
-				const { seedPhrase } = getState().app.data
-				drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
-			}
-			
-			contract = {
-				drops,
-				balance,
-				balanceFormatted: formatNearAmount(balance, 4)
-			}
+		if (!account.accountId) return
+		
+		const balance = await view('get_user_balance', { account_id: account.accountId })
 
-			if (autoUpdate) update('', { contract })
+		const drops = await view('drops_for_funder', { account_id: account.accountId })
+		
+		for (drop of drops) {
+			drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
+			
+			try {
+				drop.keySupply = await view('key_supply_for_drop', { drop_id: drop.drop_id })
+			} catch (e) {
+				console.log(e)
+			}
+			if (drop.keySupply > 0) {
+				const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
+				drop.keys = keys.map(({ pk }) => pk)
+			} else {
+				drop.keys = []
+			}
+			/// TODO this has been updated with the drop nonce
+
+			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
+			// should work even when you paginate, drop.keyPairs stays synced with drop.keys
+			const { seedPhrase } = getState().app.data
+			drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
 		}
 		
-		await account.update(false)
+		const contract = {
+			drops,
+			balance,
+			balanceFormatted: formatNearAmount(balance, 4)
+		}
+
+		update('', { contract })
+		update('wallet.accountId', account.accountId)
 	}
 
-	await update('', { near, wallet, account, contract });
+	const selector = await getSelector({
+		networkId,
+		onAccountChange: async (accountId) => {
+			console.log('account changed', accountId)
+			updateAccount()
+		}
+	})
+	
+	const account = await getAccount()
+	selector.accountId = account.accountId
+	selector.functionCall = functionCall
+	selector.viewFunction = viewFunction
+	/// updates the account re: the app contract
+	selector.update = updateAccount
+
+	await update('', { near, wallet: selector, app: { loading: false } });
 };
 
 export const accountExists = async (accountId) => {
@@ -111,6 +112,16 @@ export const getClaimAccount = (secretKey) => {
 	return account
 }
 
+export const functionCall = ({ contractId, methodName, args = {} }) => {
+	const account = getAccountWithMain(contractId)
+	return account.functionCall({
+		contractId,
+		methodName,
+		args,
+		gas,
+	})
+}
+
 export const viewMethod = ({ contractId: _contractId, methodName, args = {} }) => {
 	const account = new nearAPI.Account(connection, accountSuffix.substring(1));
 	return account.viewFunction(_contractId || contractId, methodName, args)
@@ -125,5 +136,5 @@ export const call = (account, methodName, args) => account.functionCall({
 	contractId,
 	methodName,
 	args,
-	gas: '100000000000000',
+	gas,
 })

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
 	Routes,
 	Route,
@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import { appStore, onAppMount } from './state/app';
+import { initNear } from './state/near';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { Contracts } from './components/Contracts';
@@ -19,22 +20,26 @@ import { Loading } from './components/Loading';
 
 import './css/normalize.css';
 import './css/skeleton.css';
+import './css/modal-ui.css';
 import './App.scss';
 
 const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
-	const { app, wallet, account, contract } = state
+	const { app, wallet, contract } = state
 	const { menu, loading } = app
 	const { pathname } = useLocation();
 
-	const onMount = () => {
-		dispatch(onAppMount());
+	const onMount = async () => {
+		await dispatch(onAppMount());
+		await dispatch(initNear());
 	};
-	useEffect(onMount, []);
+	useEffect(() => {
+		onMount()
+	}, []);
 
 	const routeArgs = {
-		state, update, account, wallet, contract
+		state, update, wallet, contract
 	}
 
 	if (/claim/.test(pathname)) {
@@ -49,10 +54,10 @@ const App = () => {
 	return (
 		<>
 			{ loading && <Loading /> }
-			<Header {...{ pathname, menu, account, update }} />
-			<Sidebar {...{ pathname, account, update }} />
+			<Header {...{ pathname, menu, wallet, update }} />
+			<Sidebar {...{ pathname, wallet, update }} />
 			{
-				account ?
+				wallet.isSignedIn() ?
 					/* Account Paths */
 					<main>
 						<Routes>

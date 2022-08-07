@@ -9,18 +9,20 @@ const initialState = {
 	app: {
 		mounted: false,
 		menu: false,
-		loading: false,
-		data: get(APP_DATA)
+		loading: true,
+		data: get(APP_DATA),
 	},
+	wallet: {
+		isSignedIn: () => false
+	},
+	contract: {},
 };
 
 export const { appStore, AppProvider } = State(initialState, 'app');
 
 // example app function
-export const onAppMount = (message) => async ({ update, getState, dispatch }) => {
+export const onAppMount = () => async ({ update, getState, dispatch }) => {
 	update('app', { mounted: true });
-	
-	dispatch(initNear());
 };
 
 export const insertAppDataArr = (update, k, v) => {

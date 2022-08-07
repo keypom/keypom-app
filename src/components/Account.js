@@ -3,6 +3,9 @@ import { setAppData, getAppData } from '../state/app'
 import { contractId, viewMethod } from '../state/near'
 import { file } from '../utils/store'
 import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format";
+import {
+	useNavigate
+} from "react-router-dom";
 
 const ImportAppData = ({ update }) => <button onClick={() => {
 	const confirm = window.confirm(`Do you want to remove all current app data and replace it? Make sure you export app data first!`)
@@ -27,7 +30,10 @@ const ImportAppData = ({ update }) => <button onClick={() => {
 	fileBtn.click()
 }}>Import App Data</button>
 
-export const Account = ({ update, account, wallet, contract }) => {
+export const Account = ({ update, wallet, contract }) => {
+
+	const navigate = useNavigate()
+	if (!wallet.isSignedIn()) navigate('/')
 
 	const appData = getAppData()
 	const { balanceFormatted } = contract
@@ -35,7 +41,7 @@ export const Account = ({ update, account, wallet, contract }) => {
 	const handleAddDeposit = () => {
 		const howMuch = window.prompt('How much (in NEAR) would you like to add to your account?')
 		if (parseInt(howMuch) === NaN) return
-		account.functionCall({
+		wallet.functionCall({
 			contractId,
 			methodName: `add_to_balance`,
 			gas: '100000000000000',
@@ -44,7 +50,7 @@ export const Account = ({ update, account, wallet, contract }) => {
 	}
 
 	const handleWithdraw = () => {
-		account.functionCall({
+		wallet.functionCall({
 			contractId,
 			methodName: `withdraw_from_balance`,
 			gas: '100000000000000',
@@ -52,7 +58,7 @@ export const Account = ({ update, account, wallet, contract }) => {
 	}
 
 	return <>
-		<h4>{account.accountId}</h4>
+		<h4>{wallet.accountId}</h4>
 		<button onClick={() => wallet.signOut()}>Sign Out</button>
 
 		<h4>Balance {balanceFormatted}</h4>

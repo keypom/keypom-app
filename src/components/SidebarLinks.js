@@ -2,14 +2,14 @@ import {
 	Link
 } from "react-router-dom";
 
-export const SidebarLinks = ({ pathname, update, account }) => {
+export const SidebarLinks = ({ pathname, update, wallet }) => {
 	const hideMenu = () => update('app.menu', false)
 
 	switch (pathname.substring(1)) {
 		case 'account':
 			return <nav>
 				<Link onClick={() => {
-					account.wallet.signOut()
+					wallet.signOut()
 					hideMenu()
 				}} to="/">Sign Out</Link>
 			</nav>

@@ -19,7 +19,7 @@ const functionCall = {
 	Deposit: 0,
 }
 
-export const Create = ({ state, update, account }) => {
+export const Create = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
 	const [type, setType] = useState('Simple')
@@ -58,7 +58,7 @@ export const Create = ({ state, update, account }) => {
 							balance: parseNearAmount(values.NEAR) || '1',
 						}
 						try {
-							const res = await call(account, 'create_drop', args)
+							const res = await call(wallet, 'create_drop', args)
 							console.log(res)
 
 							const drop_id = parseInt(Buffer.from(res?.status?.SuccessValue, 'base64').toString(), 10)
@@ -68,14 +68,14 @@ export const Create = ({ state, update, account }) => {
 								public_keys: keys.map(({ publicKey }) => publicKey.toString()),
 							}
 
-							const res2 =await call(account, 'add_keys', args)
+							const res2 = await call(wallet, 'add_keys', args)
 							console.log(res2)
 
 						} catch (e) {
 							update('app.loading', false)
 							throw e
 						}
-						await account.update()
+						await wallet.update()
 						update('app.loading', false)
 					}
 				}} />
@@ -154,7 +154,7 @@ export const Create = ({ state, update, account }) => {
 					}
 
 					try {
-						const res = await call(account, 'create_drop', args)
+						const res = await call(wallet, 'create_drop', args)
 						console.log(res)
 
 						const drop_id = parseInt(Buffer.from(res?.status?.SuccessValue, 'base64').toString(), 10)
@@ -164,14 +164,14 @@ export const Create = ({ state, update, account }) => {
 							public_keys: keys.map(({ publicKey }) => publicKey.toString()),
 						}
 
-						const res2 =await call(account, 'add_keys', args)
+						const res2 =await call(wallet, 'add_keys', args)
 						console.log(res2)
 
 					} catch (e) {
 						update('app.loading', false)
 						throw e
 					}
-					await account.update()
+					await wallet.update()
 					update('app.loading', false)
 
 

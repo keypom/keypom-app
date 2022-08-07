@@ -7,7 +7,7 @@ import {
 import { contractId } from '../state/near'
 import { addKeys, claimDrop } from '../state/drops'
 
-export const Drops = ({ state, update, contract, account }) => {
+export const Drops = ({ state, update, contract, wallet }) => {
 
 	const { seedPhrase } = state.app.data
 	const { drops } = contract
@@ -16,15 +16,14 @@ export const Drops = ({ state, update, contract, account }) => {
 	const onMount = async () => {
 
 	}
-
 	useEffect(() => {
 		onMount()
-	}, [])
+	}, [which])
 
 	const handleRemoveDrop = async (drop_id) => {
 		update('app.loading', true)
 		try {
-			const res = await account.functionCall({
+			const res = await wallet.functionCall({
 				contractId,
 				methodName: 'delete_keys',
 				args: {
@@ -36,7 +35,7 @@ export const Drops = ({ state, update, contract, account }) => {
 			update('app.loading', false)
 			throw e
 		}
-		await account.update()
+		await wallet.update()
 		update('app.loading', false)
 	}
 
@@ -52,9 +51,9 @@ export const Drops = ({ state, update, contract, account }) => {
 						update('app.loading', true)
 						const num = window.prompt(`How many keys would you like to add to the drop?`)
 						if (!num) return update('app.loading', false)
-						const res = await addKeys(seedPhrase, account, drop, parseInt(num))
+						const res = await addKeys(seedPhrase, wallet, drop, parseInt(num))
 						console.log(res)
-						await account.update()
+						await wallet.update()
 						update('app.loading', false)
 					}}>Add Keys</button>
 				</div>
@@ -77,8 +76,8 @@ export const Drops = ({ state, update, contract, account }) => {
 						<div className="six columns">
 							<button onClick={async () => {
 								update('app.loading', true)
-								await claimDrop(account.accountId, secretKey)
-								await account.update()
+								await claimDrop(wallet.accountId, secretKey)
+								await wallet.update()
 								update('app.loading', false)
 							}}>Claim Drop</button>
 						</div>

@@ -17,8 +17,15 @@ export const nftSeries = {
 			form: {
 				id: 1,
 				media: '',
+				copies: 10,
 				royalty_receiver: '',
-				royalty_percent: 5,
+				royalty_percent: 0,
+			}
+		},
+		update_series_id: {
+			form: {
+				current_id: 1,
+				new_id: 2,
 			}
 		}
 	}
