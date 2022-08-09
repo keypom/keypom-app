@@ -29,7 +29,17 @@ export const Header = ({ pathname, menu, wallet, update }) => {
 	return <header>
 		<div>
 			<p>
-				Drop Zone { pathname.length > 1 && '/ ' + pathname.replaceAll('/', ' ') }
+				Drop Zone
+				{
+					pathname.split('/').map((str, i) => <span key={str + i}>
+						{
+							pathname.split('/').length === i+1
+							? str
+							: <Link to={'/' + str}>{ str }</Link>
+						}
+						&nbsp;
+					</span>)
+				}
 			</p>
 		</div>
 		<div>

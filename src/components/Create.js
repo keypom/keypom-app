@@ -1,7 +1,7 @@
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { useEffect, useState } from "react";
 import { genKeys } from '../state/drops'
-import { contractId, call } from '../state/near'
+import { call, view } from '../state/near'
 import { Form } from "./Form";
 
 import dJSON from 'dirty-json';
@@ -11,12 +11,23 @@ import dJSON from 'dirty-json';
 
 const types = ['Simple', 'FT Drop', 'NFT Drop', 'Custom Call']
 const params = ['Receiver', 'Method', 'Args', 'Deposit']
+// const functionCall = {
+// 	None: false,
+// 	receiver_id: '',
+// 	method_name: '',
+// 	args: '',
+// 	attached_deposit: 0,
+// 	account_id_field: '',
+// 	drop_id_field: '',
+// }
 const functionCall = {
 	None: false,
-	Receiver: '',
-	Method: '',
-	Args: '',
-	Deposit: 0,
+	receiver_id: 'pp-13.testnet',
+	method_name: 'nft_mint',
+	args: '{}',
+	attached_deposit: 0,
+	account_id_field: 'receiver_id',
+	drop_id_field: 'id',
 }
 
 export const Create = ({ state, update, wallet }) => {
@@ -139,25 +150,31 @@ export const Create = ({ state, update, wallet }) => {
 
 					let args = {
 						public_keys: [],
-						balance: '1',
+						deposit_per_use: '0',
 						drop_config: {
 							max_claims_per_key: customData.length
 						},
 						fc_data: {
-							method_data: customData.map((data) => data.None ? null : ({
-								receiver: data.Receiver,
-								method: data.Method,
-								args: JSON.stringify(dJSON.parse(data.Args)),
-								deposit: parseNearAmount(data.Deposit)
-							}))
+							config: {
+								account_id_field: customData[0].account_id_field,
+								drop_id_field: customData[0].drop_id_field
+							},
+							methods: customData.map((data) => data.None ? null : [{
+								receiver_id: data.receiver_id,
+								method_name: data.method_name,
+								args: JSON.stringify(dJSON.parse(data.args || '{}')),
+								attached_deposit: parseNearAmount(data.attached_deposit) || '0'
+							}])
 						}
 					}
-
+					
 					try {
 						const res = await call(wallet, 'create_drop', args)
-						console.log(res)
-
-						const drop_id = parseInt(Buffer.from(res?.status?.SuccessValue, 'base64').toString(), 10)
+						
+						const drops = await view('get_drops_for_owner', { account_id: wallet.accountId })
+						drops.sort((a, b) => b.drop_id - a.drop_id)
+						const { drop_id } = drops[0]
+						
 						const keys = await genKeys(seedPhrase, numKeys, drop_id)
 						args = {
 							drop_id,

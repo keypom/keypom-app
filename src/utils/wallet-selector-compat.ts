@@ -153,18 +153,19 @@ export const functionCall = async ({
 		throw new Error("functionCall error: methodName undefined");
 	}
 
-	return wallet.signAndSendTransaction({
+	const res = await wallet.signAndSendTransaction({
 		receiverId: _contractId || contractId,
 		actions: [
 			{
 				type: "FunctionCall",
 				params: {
 					methodName,
-					args,
+					args: args || '{}',
 					gas: gas?.toString() || "30000000000000",
-					deposit: attachedDeposit?.toString() || "0",
+					deposit: attachedDeposit?.toString() || undefined,
 				},
 			},
 		],
 	});
+	return res
 };

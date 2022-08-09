@@ -20,13 +20,19 @@ export const nftSeries = {
 				copies: 10,
 				royalty_receiver: '',
 				royalty_percent: 0,
-			}
+			},
+			valuesMap: {
+				media: 'metadata.media',
+				copies: 'metadata.copies',
+			},
+			deposit: '0.1'
 		},
 		update_series_id: {
 			form: {
 				current_id: 1,
 				new_id: 2,
-			}
+			},
+			number: [ 'current_id', 'new_id' ],
 		}
 	}
 }

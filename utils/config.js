@@ -1,4 +1,4 @@
-const contractName = 'mothafucka.testnet';
+const contractName = 'keypom.testnet';
 
 module.exports = function getConfig(network = 'testnet') {
 	let config = {

@@ -12,7 +12,7 @@ export const Drops = ({ state, update, contract, wallet }) => {
 	const { seedPhrase } = state.app.data
 	const { drops } = contract
 	const { which } = useParams()
-	
+
 	const onMount = async () => {
 
 	}
@@ -31,7 +31,7 @@ export const Drops = ({ state, update, contract, wallet }) => {
 				},
 				gas: '100000000000000',
 			})
-		} catch(e) {
+		} catch (e) {
 			update('app.loading', false)
 			throw e
 		}
@@ -39,10 +39,15 @@ export const Drops = ({ state, update, contract, wallet }) => {
 		update('app.loading', false)
 	}
 
+	if (!drops?.length) return <>
+		<p>No drops</p>
+		<Link to={'/create'}><button>Create a Drop</button></Link>
+	</>
+
 	if (which) {
 		const drop = drops.find((d) => d.drop_id === parseInt(which))
 		if (!drop) return <p>Can't find drop ID {which}</p>
-		
+
 		return <>
 			<h4>Drop ID: {drop.drop_id}</h4>
 			<div className="row sm">
@@ -61,61 +66,63 @@ export const Drops = ({ state, update, contract, wallet }) => {
 					<button onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
 				</div>
 			</div>
-			<h4>Keys { drop.keySupply }</h4>
 			{
-				drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
-					<div className="row sm">
-						<div className="twelve columns">
-						<p>{secretKey.substring(0, 32)}</p>
-						</div>
-					</div>
-					<div className="row sm">
-						<div className="six columns">
-							<Link to={`/claim/${secretKey}`}><button>Preview Drop</button></Link>
-						</div>
-						<div className="six columns">
-							<button onClick={async () => {
-								update('app.loading', true)
-								await claimDrop(wallet.accountId, secretKey)
-								await wallet.update()
-								update('app.loading', false)
-							}}>Claim Drop</button>
-						</div>
-					</div>
-				</div>)
+				drop.keyPairs && <>
+
+					<h4>Keys {drop.keySupply}</h4>
+					{
+						drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
+							<div className="row sm">
+								<div className="twelve columns">
+									<p>{secretKey.substring(0, 32)}</p>
+								</div>
+							</div>
+							<div className="row sm">
+								<div className="six columns">
+									<Link to={`/claim/${secretKey}`}><button>Preview Drop</button></Link>
+								</div>
+								<div className="six columns">
+									<button onClick={async () => {
+										update('app.loading', true)
+										await claimDrop(wallet.accountId, secretKey)
+										await wallet.update()
+										update('app.loading', false)
+									}}>Claim Drop</button>
+								</div>
+							</div>
+						</div>)
+					}
+
+				</>
 			}
 		</>
 	}
 
 	return <>
-	<h4>Your Drops</h4>
+		<h4>Your Drops</h4>
 
-	{
-		drops.length === 0 && <p>No drops</p>
-	}
-
-	{
-		drops.map(({ drop_id, balance, drop_type_label }) => <div key={drop_id}>
-			<div className="row sm">
-				<div className="six columns">
-					<p>Drop ID: {drop_id}</p>
+		{
+			drops.map(({ drop_id, balance, drop_type_label }) => <div key={drop_id}>
+				<div className="row sm">
+					<div className="six columns">
+						<p>Drop ID: {drop_id}</p>
+					</div>
+					<div className="six columns">
+						<p>{drop_type_label}</p>
+					</div>
 				</div>
-				<div className="six columns">
-					<p>{drop_type_label}</p>
+				<div className="row sm">
+					<div className="six columns">
+						<Link to={`/drops/${drop_id}`}>
+							<button>Details</button>
+						</Link>
+					</div>
+					<div className="six columns">
+						<button onClick={() => handleRemoveDrop(drop_id)}>Remove Drop</button>
+					</div>
 				</div>
-			</div>
-			<div className="row sm">
-				<div className="six columns">
-					<Link to={`/drops/${drop_id}`}>
-						<button>Details</button>
-					</Link>
-				</div>
-				<div className="six columns">
-					<button onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
-				</div>
-			</div>
-		</div>)
-	}
+			</div>)
+		}
 	</>
 
 }

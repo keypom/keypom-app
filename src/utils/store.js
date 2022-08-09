@@ -1,4 +1,4 @@
-export const get = (k) => {
+export const get = window.get = (k) => {
 	const v = localStorage.getItem(k);
 	if (v?.charAt(0) !== '{') {
 		return v;
@@ -9,8 +9,8 @@ export const get = (k) => {
 		console.warn(e);
 	}
 };
-export const set = (k, v) => localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
-export const del = (k) => localStorage.removeItem(k);
+export const set = window.set = (k, v) => localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+export const del = window.del = (k) => localStorage.removeItem(k);
 
 export const file = (fn, data) => {
 	// Dynamically create a File

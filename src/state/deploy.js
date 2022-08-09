@@ -18,7 +18,7 @@ export const contractBySpec = (spec) => Object.values(contracts).find(({ form: {
 
 const DEPLOY = `__DEPLOY`
 
-export const checkDeploy = async ({ state, account, update }) => {
+export const checkDeploy = async ({ state, wallet, update }) => {
 	
 	const deploy = get(DEPLOY)
 	if (!deploy) return update('app.loading', false)
@@ -44,13 +44,13 @@ export const checkDeploy = async ({ state, account, update }) => {
 				throw e
 			}
 
-			await account.functionCall({
+			await wallet.functionCall({
 				contractId,
 				methodName: `create_drop`,
 				gas: '100000000000000',
 				args: {
 					public_keys: [new_public_key],
-					balance: parseNearAmount(values.NEAR.toString() || '5'),
+					deposit_per_use: parseNearAmount(values.NEAR.toString() || '5'),
 					drop_config: {
 						max_claims_per_key: 1,
 					}
@@ -112,7 +112,7 @@ export const checkDeploy = async ({ state, account, update }) => {
 			methodName: 'new',
 			gas: '100000000000000',
 			args: {
-				owner_id: account.accountId,
+				owner_id: wallet.accountId,
 				metadata: {
 					spec: values.spec,
 					name: values.name,

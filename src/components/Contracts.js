@@ -41,31 +41,43 @@ export const Contracts = ({ state, update, wallet }) => {
 		return <>
 			<h4>{which} methods:</h4>
 			{
-				Object.entries(interact).map(([k, v]) => {
+				Object.entries(interact).map(([k, { form, valuesMap, deposit, number }]) => {
 
-					return <>
+					return <div key={k}>
 						<p>{k}</p>
 						<Form {...{
-							data: v.form,
+							data: form,
 							submit: async (values) => {
-								console.log(values)
 
+								const args = {}
+								Object.entries(values).forEach(([k, v]) => {
+									if (number.includes(k)) v = parseInt(v)
+
+									const map = valuesMap || {}
+									if (map[k]) {
+										const nested = map[k].split('.')
+										let obj = args[map[k]]
+										while (nested.length > 1) {
+											const inner = nested.shift()
+											obj = args[inner] = args[inner] || {}
+										}
+										obj[nested[0]] = v
+										return
+									}
+									args[k] = v
+								})
+								
 								const res = await wallet.functionCall({
 									contractId: which,
 									methodName: k,
-									args: {
-										id: values.id,
-										metadata: {
-											media: values.media
-										}
-									},
-									attachedDeposit: parseNearAmount('0.1'),
+									args,
+									attachedDeposit: deposit ? parseNearAmount(deposit) : undefined,
 									gas
 								})
 							},
 							submitLabel: `Call ${k} Method`
 						}} />
-					</>
+					</div>
 				})
 			}
 		</>

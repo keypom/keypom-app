@@ -22,17 +22,17 @@ export const initNear = () => async ({ update, getState }) => {
 	const updateAccount = async () => {
 		const account = await getAccount()
 
-		if (!account.accountId) return
+		if (!account.accountId) return update('app.loading', false)
 		
 		const balance = await view('get_user_balance', { account_id: account.accountId })
 
-		const drops = await view('drops_for_funder', { account_id: account.accountId })
+		const drops = await view('get_drops_for_owner', { account_id: account.accountId })
 		
 		for (drop of drops) {
 			drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
 			
 			try {
-				drop.keySupply = await view('key_supply_for_drop', { drop_id: drop.drop_id })
+				drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
 			} catch (e) {
 				console.log(e)
 			}
@@ -56,12 +56,16 @@ export const initNear = () => async ({ update, getState }) => {
 			balanceFormatted: formatNearAmount(balance, 4)
 		}
 
+		console.log(contract)
+
 		update('', { contract })
 		update('wallet.accountId', account.accountId)
+		update('app.loading', false)
 	}
 
 	const selector = await getSelector({
 		networkId,
+		contractId,
 		onAccountChange: async (accountId) => {
 			console.log('account changed', accountId)
 			updateAccount()
@@ -75,7 +79,7 @@ export const initNear = () => async ({ update, getState }) => {
 	/// updates the account re: the app contract
 	selector.update = updateAccount
 
-	await update('', { near, wallet: selector, app: { loading: false } });
+	await update('', { near, wallet: selector });
 };
 
 export const accountExists = async (accountId) => {
