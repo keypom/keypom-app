@@ -136,9 +136,11 @@ export const view = (methodName, args) => {
 	return account.viewFunction(contractId, methodName, args)
 }
 
-export const call = (account, methodName, args) => account.functionCall({
-	contractId,
-	methodName,
-	args,
-	gas,
-})
+export const call = (account, methodName, args) => {
+	return account.functionCall({
+		contractId,
+		methodName,
+		args,
+		gas,
+	})
+}

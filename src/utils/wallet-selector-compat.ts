@@ -160,7 +160,7 @@ export const functionCall = async ({
 				type: "FunctionCall",
 				params: {
 					methodName,
-					args: args || '{}',
+					args: args || '',
 					gas: gas?.toString() || "30000000000000",
 					deposit: attachedDeposit?.toString() || undefined,
 				},

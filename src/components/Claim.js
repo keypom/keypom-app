@@ -9,6 +9,8 @@ import {
 	Link, useParams,
 } from "react-router-dom";
 
+import './Claim.scss'
+
 export const Claim = ({ state, update, wallet }) => {
 	const { secretKey } = useParams()
 
@@ -25,8 +27,10 @@ export const Claim = ({ state, update, wallet }) => {
 		try {
 			_drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 			setDrop(_drop)
+			console.log(_drop)
 			_keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			setKeyInfo(_keyInfo)
+			console.log(_keyInfo)
 		} catch(e) {
 			console.warn(e)
 			setDrop(null)
@@ -35,7 +39,6 @@ export const Claim = ({ state, update, wallet }) => {
 		const { FC } = _drop.drop_type
 		setIsTicket(FC?.method_data?.length === 2 && FC?.method_data[0] === null)
 		
-		console.log(_keyInfo)
 
 		if (_keyInfo.key_info.num_uses === 2) {
 			update('app.loading', true)
@@ -51,8 +54,17 @@ export const Claim = ({ state, update, wallet }) => {
 
 	if (!drop) return <p>Not a valid drop</p>
 
+	let metadata
+	if (drop.metadata) {
+		metadata = JSON.parse(drop.metadata)
+	}
+
+	console.log(metadata)
+
 	return <>
-	<p>Drop { drop.drop_id }</p>
+	{ 
+		metadata && <img src={metadata.media} />
+	}
 	<button onClick={async () => {
 		const account = await getClaimAccount(keyPair.secretKey)
 		

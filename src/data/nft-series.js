@@ -12,6 +12,12 @@ export const nftSeries = {
 		// reference: '_',
 		// reference_hash: '_',
 	},
+	data: {
+		get_series: {
+			from_index: '0',
+			limit: 50,
+		}
+	},
 	interact: {
 		create_series: {
 			form: {
@@ -25,6 +31,7 @@ export const nftSeries = {
 				media: 'metadata.media',
 				copies: 'metadata.copies',
 			},
+			number: ['id', 'copies'],
 			deposit: '0.1'
 		},
 		update_series_id: {
@@ -32,7 +39,12 @@ export const nftSeries = {
 				current_id: 1,
 				new_id: 2,
 			},
-			number: [ 'current_id', 'new_id' ],
-		}
+			number: ['current_id', 'new_id'],
+		},
+		add_approved_minter: {
+			form: {
+				account_id: ''
+			}
+		},
 	}
 }

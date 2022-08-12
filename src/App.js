@@ -14,6 +14,7 @@ import { Drops } from './components/Drops';
 import { Create } from './components/Create';
 import { Deploy } from './components/Deploy';
 import { Claim } from './components/Claim';
+import { Ticket } from './components/Ticket';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
 import { Loading } from './components/Loading';
@@ -31,6 +32,7 @@ const App = () => {
 	const { pathname } = useLocation();
 
 	const onMount = async () => {
+		if (/claim|ticket/.test(pathname)) return
 		await dispatch(onAppMount());
 		await dispatch(initNear());
 	};
@@ -47,6 +49,15 @@ const App = () => {
 			{ loading && <Loading /> }
 			<Routes>
 				<Route path="/claim/:secretKey" element={<Claim {...routeArgs} />} />
+			</Routes>
+		</main>
+	}
+
+	if (/ticket/.test(pathname)) {
+		return <main className="ticket">
+			{ loading && <Loading /> }
+			<Routes>
+				<Route path="/ticket/:secretKey" element={<Ticket {...routeArgs} />} />
 			</Routes>
 		</main>
 	}

@@ -5,14 +5,15 @@ import {
 } from "react-router-dom";
 import { Form } from "./Form";
 import { viewMethod, gas } from '../state/near'
-import { explorerLink, addContract, removeContract } from "../state/contracts";
+import { explorerLink, addContract, removeContract, updateContract } from "../state/contracts";
 
-import { contracts, contractBySpec } from "../state/deploy"
+import { contractBySpec } from "../state/deploy"
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 export const Contracts = ({ state, update, wallet }) => {
 
 	const [interact, setInteract] = useState()
+	const [data, setData] = useState([])
 	const { contracts } = state.app?.data
 	const { which } = useParams()
 
@@ -23,6 +24,14 @@ export const Contracts = ({ state, update, wallet }) => {
 			const metadata = await viewMethod({ contractId: which, methodName: 'nft_metadata' })
 			if (!metadata) return
 			contract = contractBySpec(metadata.spec)
+
+			if (contract.data) {
+				const res = await Promise.all(Object.entries(contract.data).map(([methodName, args]) => 
+					viewMethod({ contractId: which, methodName, args })
+				))
+				setData(res)
+				console.log(res)
+			}
 
 			const series = await viewMethod({ contractId: which, methodName: 'nft_metadata' })
 			if (!contract) return
@@ -51,7 +60,9 @@ export const Contracts = ({ state, update, wallet }) => {
 
 								const args = {}
 								Object.entries(values).forEach(([k, v]) => {
-									if (number.includes(k)) v = parseInt(v)
+									if (number) {
+										if (number.includes(k)) v = parseInt(v)
+									}
 
 									const map = valuesMap || {}
 									if (map[k]) {
@@ -103,6 +114,11 @@ export const Contracts = ({ state, update, wallet }) => {
 					<div className="six columns">
 						<Link to={`/contracts/${contractId}`}><button>Interact</button></Link>
 					</div>
+					<div className="six columns">
+						<button onClick={() => updateContract(update, contractId)}>Update</button>
+					</div>
+				</div>
+				<div className="row sm">
 					<div className="six columns">
 						<button className="button-warning" onClick={() => removeContract(update, contractId)}>Remove</button>
 					</div>

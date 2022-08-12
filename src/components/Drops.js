@@ -79,7 +79,7 @@ export const Drops = ({ state, update, contract, wallet }) => {
 							</div>
 							<div className="row sm">
 								<div className="six columns">
-									<Link to={`/claim/${secretKey}`}><button>Preview Drop</button></Link>
+									<Link to={`/ticket/${secretKey}`}><button>Preview Drop</button></Link>
 								</div>
 								<div className="six columns">
 									<button onClick={async () => {

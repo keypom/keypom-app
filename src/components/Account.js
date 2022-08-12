@@ -41,6 +41,9 @@ export const Account = ({ update, wallet, contract }) => {
 	const handleAddDeposit = () => {
 		const howMuch = window.prompt('How much (in NEAR) would you like to add to your account?')
 		if (parseInt(howMuch) === NaN) return
+
+		console.log(howMuch)
+
 		wallet.functionCall({
 			contractId,
 			methodName: `add_to_balance`,

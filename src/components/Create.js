@@ -10,7 +10,8 @@ import dJSON from 'dirty-json';
 
 
 const types = ['Simple', 'FT Drop', 'NFT Drop', 'Custom Call']
-const params = ['Receiver', 'Method', 'Args', 'Deposit']
+const params = ['receiver_id', 'method_name', 'args', 'attached_deposit']
+const skip = ['account_id_field', 'drop_id_field']
 // const functionCall = {
 // 	None: false,
 // 	receiver_id: '',
@@ -22,19 +23,25 @@ const params = ['Receiver', 'Method', 'Args', 'Deposit']
 // }
 const functionCall = {
 	None: false,
-	receiver_id: 'pp-13.testnet',
+	receiver_id: 'pp-14.testnet',
 	method_name: 'nft_mint',
-	args: '{}',
-	attached_deposit: 0,
-	account_id_field: 'receiver_id',
-	drop_id_field: 'id',
+	args: '',
+	attached_deposit: '0.1',
 }
 
 export const Create = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
 	const [type, setType] = useState('Simple')
-	const [customData, setCustomData] = useState([{ Keys: 0, ...functionCall}])
+	const [customData, setCustomData] = useState([{
+		Keys: 0,
+		metadata: JSON.stringify({
+			media: 'https://cloudflare-ipfs.com/ipfs/bafybeih5sqn4rn2wo2me3clut4rxmamtzpaxjy734sfr76gwajlqettrf4'
+		}),
+		account_id_field: 'receiver_id',
+		drop_id_field: 'id',
+		...functionCall,
+	}])
 
 	const onMount = async () => {
 
@@ -143,16 +150,20 @@ export const Create = ({ state, update, wallet }) => {
 				<button className="button-primary" onClick={async () => {
 					console.log(customData)
 
-					const numKeys = parseInt(customData[0].Keys)
-					delete customData[0].Keys
+					const first = customData[0]
+					const numKeys = parseInt(first.Keys)
+					const metadata = first.metadata.length ? JSON.stringify(dJSON.parse(first.metadata)) : undefined
+					delete first.Keys
 
 					update('app.loading', true)
 
 					let args = {
 						public_keys: [],
 						deposit_per_use: '0',
-						drop_config: {
-							max_claims_per_key: customData.length
+						metadata,
+						config: {
+							uses_per_key: customData.length,
+							on_claim_refund_deposit: true,
 						},
 						fc_data: {
 							config: {
@@ -162,11 +173,13 @@ export const Create = ({ state, update, wallet }) => {
 							methods: customData.map((data) => data.None ? null : [{
 								receiver_id: data.receiver_id,
 								method_name: data.method_name,
-								args: JSON.stringify(dJSON.parse(data.args || '{}')),
+								args: data.args.length ? JSON.stringify(dJSON.parse(data.args)) : '',
 								attached_deposit: parseNearAmount(data.attached_deposit) || '0'
 							}])
 						}
 					}
+
+					console.log(args)
 					
 					try {
 						const res = await call(wallet, 'create_drop', args)
@@ -174,7 +187,7 @@ export const Create = ({ state, update, wallet }) => {
 						const drops = await view('get_drops_for_owner', { account_id: wallet.accountId })
 						drops.sort((a, b) => b.drop_id - a.drop_id)
 						const { drop_id } = drops[0]
-						
+
 						const keys = await genKeys(seedPhrase, numKeys, drop_id)
 						args = {
 							drop_id,

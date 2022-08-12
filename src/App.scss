@@ -18,9 +18,6 @@ main {
 	margin-top: 64px;
     margin-left: 0;
     padding: 16px;
-    &.claim {
-        margin-top: 0;
-    }
 }
 
 .button-warning, .button-warning:hover {
@@ -78,9 +75,7 @@ button {
             padding: 0 !important;
         }
     }
-}
-@media only screen and (min-device-width: 768px) {
-	main {
+    main {
         margin-left: 256px;
-	}
+    }
 }
