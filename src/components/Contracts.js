@@ -48,12 +48,16 @@ export const Contracts = ({ state, update, wallet }) => {
 	if (which) {
 		if (!interact) return <p>Cannot find contract by spec or interaction data</p>
 		return <>
-			<h4>{which} methods:</h4>
+			<h3>Data</h3>
+			{
+				data.map((d) => <p>{JSON.stringify(d)}</p>)
+			}
+			<h3>Methods</h3>
 			{
 				Object.entries(interact).map(([k, { form, valuesMap, deposit, number }]) => {
 
 					return <div key={k}>
-						<p>{k}</p>
+						<h4>{k}</h4>
 						<Form {...{
 							data: form,
 							submit: async (values) => {

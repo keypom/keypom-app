@@ -1,8 +1,12 @@
-
-
 main.ticket {
-	margin: -16px 0 64px 0;
+	margin: -32px 0 64px 0;
 	text-align: center;
+
+	>button {
+		color: black;
+		background: white;
+		margin: 0 !important;
+	}
 
 	>img {
 		display: block;
@@ -11,17 +15,20 @@ main.ticket {
 		box-shadow:
 			0 0 16px 4px #ffffff22,
 			0 0 24px 2px #ffffff22,
-			0 0 32px 0px #ffffff22;
+			0 0 32px 0px #ff00ff44;
 	}
 
-	> div {
-		> img {
-			margin: 32px auto;
+	>div {
+		margin: auto;
+		max-width: 500px;
+		padding: 1.5rem;
+		background: white;
+		>img {
 			width: 100%;
 		}
 	}
 
-	> .poms img {
+	>.poms img {
 		position: fixed;
 		top: min(300px, 35vw);
 		left: calc(50vw - 100px);
@@ -37,7 +44,5 @@ main.ticket {
 		img {
 			max-width: 500px;
 		}
-
 	}
-
 }

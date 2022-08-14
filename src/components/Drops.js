@@ -48,6 +48,8 @@ export const Drops = ({ state, update, contract, wallet }) => {
 		const drop = drops.find((d) => d.drop_id === parseInt(which))
 		if (!drop) return <p>Can't find drop ID {which}</p>
 
+		console.log(drop)
+
 		return <>
 			<h4>Drop ID: {drop.drop_id}</h4>
 			<div className="row sm">

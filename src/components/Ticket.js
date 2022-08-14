@@ -14,13 +14,17 @@ import {
 
 import './Ticket.scss'
 
+const SECRET_KEY = '__SECRET_KEY'
+
 const poms = () => {
-	const w = window.innerWidth
-	const scales = [3, 4, 5, 6, 7, 8, 3, 4, 5, 6, 7, 8].map((v) => v * Math.max(1, w / 100))
+	const w = Math.min(500, window.innerWidth)
+	const scales = [3, 4, 5, 6, 7, 8, 9, 3, 4, 5, 6, 8, 9].map((v) => v * Math.max(1, w / 100))
 	anime({
 		targets: '.poms > img',
 		scaleX: 0,
 		scaleY: 0,
+		translateX: 0,
+		translateY: 0,
 		opacity: 1,
 		duration: 0,
 		complete: () => {
@@ -28,38 +32,79 @@ const poms = () => {
 				targets: '.poms > img',
 				scaleX: (_, i) => scales[i],
 				scaleY: (_, i) => scales[i],
-				translateX: () => Math.random()*w*8 - w*4,
-				translateY: () => Math.random()*w*8 - w*4,
+				translateX: () => Math.random()*w*2 - w*1,
+				translateY: () => Math.random()*w*2 - w*1,
 				opacity: 0,
 				rotate: '1turn',
-				easing: 'easeInOutExpo',
-				duration: 3000,
-				delay: anime.stagger(150) // increase delay by 100ms for each elements.
-			  });
+				easing: 'easeOutQuad',
+				duration: 2500,
+				delay: anime.stagger(300),
+			});
 		}
 	});
 }
 
+const genQR = (qr) => {
+	const h = document.getElementById('media').getBoundingClientRect().height
+
+	anime({
+		targets: qr.current,
+		translateY: -h,
+		opacity: 0,
+		duration: 0,
+		complete: () => {
+			anime({
+				targets: qr.current,
+				translateY: 0,
+				opacity: 1,
+				easing: 'easeOutQuad',
+				duration: 1000,
+			});
+		}
+	});
+
+	if (document.getElementById('qr').children.length) return
+
+	new QRCode(qr.current, {
+		text: window.location.href,
+		width: 256,
+		height: 256,
+		colorDark: "#304",
+		colorLight: "#FFF",
+		correctLevel: QRCode.CorrectLevel.M
+	})
+}
+
 export const Ticket = ({ state, update, wallet }) => {
-	const { secretKey } = useParams()
+
+	let secretKey = get(SECRET_KEY)
+	const hasSecretKey = !!secretKey
+	if (!hasSecretKey) {
+		secretKey = useParams().secretKey
+	// don't visit another secret key if we've already activated one
+	} else if (window.location.href.indexOf(secretKey) === -1) {
+		window.location.href = window.location.origin + '/ticket/' + secretKey
+		return null
+	}
+
 	const qr = useRef();
 
 	const [keyPair, setKeyPair] = useState({})
 	const [keyInfo, setKeyInfo] = useState({})
 	const [drop, setDrop] = useState({})
 	
-	
 	const onMount = async () => {
+		console.log('hello')
+		setTimeout(() => document.body.classList.add('dark'), 10)
+		
 		update('app.loading', true)
-		const _keyPair = KeyPair.fromString(secretKey)
-		setKeyPair(_keyPair)
-		let _drop, _keyInfo
 		try {
-			_drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
-			setDrop(_drop)
+			const _keyPair = KeyPair.fromString(secretKey)
+			setKeyPair(_keyPair)
+
+			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_drop)
-			_keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
-			setKeyInfo(_keyInfo)
+			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_keyInfo)
 
 			// const { FC } = _drop.drop_type
@@ -68,19 +113,15 @@ export const Ticket = ({ state, update, wallet }) => {
 			if (_keyInfo.key_info.remaining_uses === 3) {
 				console.log('here')
 				poms()
-				// update('app.loading', true)
-				// const account = await getClaimAccount(_keyPair.secretKey)
-				// const res = await call(account, 'claim', { account_id: `testnet` })
+				set(SECRET_KEY, secretKey)
+				const account = await getClaimAccount(_keyPair.secretKey)
+				const res = await call(account, 'claim', { account_id: `testnet` })
+				console.log(res)
 			}
 
-			new QRCode(qr.current, {
-				text: window.location.href,
-				width: 256,
-				height: 256,
-				colorDark: "#204",
-				colorLight: "#FFF",
-				correctLevel: QRCode.CorrectLevel.M
-			});
+			setKeyInfo(_keyInfo)
+			setDrop(_drop)
+			setTimeout(() => genQR(qr), 200)
 			
 		} catch(e) {
 			console.warn(e)
@@ -99,6 +140,8 @@ export const Ticket = ({ state, update, wallet }) => {
 		metadata = JSON.parse(drop.metadata)
 	}
 
+	const uses = keyInfo?.key_info?.remaining_uses
+
 	return <>
 
 	<div className="poms">
@@ -114,17 +157,17 @@ export const Ticket = ({ state, update, wallet }) => {
 		<img src={Keypom} />
 	</div>
 	{ 
-		metadata && <img src={metadata.media} />
+		metadata && keyInfo && <img id="media" src={metadata.media} />
 	}
 	{
-		keyInfo?.key_info?.remaining_uses === 1 && <button onClick={async () => {
+		uses === 1 && <button onClick={async () => {
 			const account = await getClaimAccount(keyPair.secretKey)
 			
 			const res = await call(account, 'claim', { account_id: `md1.testnet` })
 			console.log(res)
 			}}>Claim NFT</button>
 	}
-			<div ref={qr}></div>
+			<div id="qr" ref={qr}></div>
 
 			
 	</>

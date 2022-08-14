@@ -15,6 +15,7 @@ import { Create } from './components/Create';
 import { Deploy } from './components/Deploy';
 import { Claim } from './components/Claim';
 import { Ticket } from './components/Ticket';
+import { Scanner } from './components/Scanner';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
 import { Loading } from './components/Loading';
@@ -24,6 +25,15 @@ import './css/skeleton.css';
 import './css/modal-ui.css';
 import './App.scss';
 
+const alt = (loading, path, Component, routeArgs) => {
+	return <main className={path.split('/')[1]}>
+		{ loading && <Loading /> }
+		<Routes>
+			<Route path={path} element={<Component {...routeArgs} />} />
+		</Routes>
+	</main>
+}
+
 const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
@@ -32,7 +42,8 @@ const App = () => {
 	const { pathname } = useLocation();
 
 	const onMount = async () => {
-		if (/claim|ticket/.test(pathname)) return
+		document.body.classList.remove('dark')
+		if (/claim|ticket|scanner/.test(pathname)) return
 		await dispatch(onAppMount());
 		await dispatch(initNear());
 	};
@@ -44,23 +55,9 @@ const App = () => {
 		state, update, wallet, contract
 	}
 
-	if (/claim/.test(pathname)) {
-		return <main className="claim">
-			{ loading && <Loading /> }
-			<Routes>
-				<Route path="/claim/:secretKey" element={<Claim {...routeArgs} />} />
-			</Routes>
-		</main>
-	}
-
-	if (/ticket/.test(pathname)) {
-		return <main className="ticket">
-			{ loading && <Loading /> }
-			<Routes>
-				<Route path="/ticket/:secretKey" element={<Ticket {...routeArgs} />} />
-			</Routes>
-		</main>
-	}
+	if (/claim/.test(pathname)) return alt(loading, "/claim/:secretKey", Claim, routeArgs)
+	if (/ticket/.test(pathname)) return alt(loading, "/ticket/:secretKey", Ticket, routeArgs)
+	if (/scanner/.test(pathname)) return alt(loading, "/scanner", Scanner, routeArgs)
 
 	return (
 		<>

@@ -56,8 +56,6 @@ export const initNear = () => async ({ update, getState }) => {
 			balanceFormatted: formatNearAmount(balance, 4)
 		}
 
-		console.log(contract)
-
 		update('', { contract })
 		update('wallet.accountId', account.accountId)
 		update('app.loading', false)
