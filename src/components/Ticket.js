@@ -108,7 +108,7 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 	}
 
 	const onMount = async () => {
-		// setTimeout(() => document.body.classList.add('dark'), 10)
+		setTimeout(() => document.body.classList.add('dark'), 10)
 
 		update('app.loading', true)
 		try {
