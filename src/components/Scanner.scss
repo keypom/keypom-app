@@ -1,94 +1,39 @@
 main.scanner {
-	margin: -32px 0 64px 0;
+	margin: 16px;
+	text-align: center;
 
-	#camera {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-
-		min-width: 100%;
-		min-height: 100%;
-		width: auto;
-		height: auto;
-
-		z-index: -100;
-
-		transform: translateX(-50%) translateY(-50%);
+	p {
+		color: white;
 	}
 
-	.mdl-dialog__content {
-		text-align: center;
+	button {
+		background: white;
+		color: black;
+		border-color: white;
+		margin: auto;
 	}
 
-	#resultsContainer {
-		overflow-wrap: break-word;
+	>.result {
+		p {
+			margin-top: 32px;
+			padding: 16px;
+			color: white;
+			font-size: 2rem;
+			text-align: center;
+			font-weight: bold;
 
-		border: 0;
-		border-radius: 1em;
-		background-color: #dedede;
-		padding: 0.5em 2em;
+
+			&.valid {
+				background: #00ff0044;
+			}
+
+			&.invalid {
+				background: #ff000044;
+			}
+
+			&.info {
+				background: #0000ff44;
+			}
+		}
 	}
-
-	#snapshotLimitOverlay {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-
-		width: 70vmin;
-		height: 70vmin;
-
-		transform: translateX(-50%) translateY(-50%);
-
-		text-align: center;
-	}
-
-	#snapshotLimitOverlay:after {
-		content:'';
-
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-
-		box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.4);
-	}
-
-	#snapshot {
-		display: none;
-	}
-
-	#loading {
-		display: none;
-		position: absolute;
-		width: 100%;
-		z-index: 10;
-	}
-
-	#flipCamera, #aboutButton {
-		position: absolute;
-		background-color: #eee;
-	}
-
-	#flipCamera {
-		display: none;
-
-		top: 5vmin;
-		right: 5vmin;
-	}
-
-	#aboutButton {
-		bottom: 5vmin;
-		left: 5vmin;
-	}
-
-	#about {
-		background-color: white;
-		height: 100%;
-	}
-
-	#about h4 {
-		margin-top: 0;
-	}
-
 }

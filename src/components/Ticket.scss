@@ -1,11 +1,17 @@
 main.ticket {
 	margin: -32px 0 64px 0;
 	text-align: center;
+	color: white;
+
+	>h4 {
+		margin-top: 100px !important;
+	}
 
 	>button {
-		color: black;
 		background: white;
-		margin: 0 !important;
+		color: black;
+		border-color: white;
+		margin: 0 0 32px 0 !important;
 	}
 
 	>img {
@@ -18,24 +24,27 @@ main.ticket {
 			0 0 32px 0px #ff00ff44;
 	}
 
-	>div {
+	>#qr {
 		margin: auto;
 		max-width: 500px;
 		padding: 1.5rem;
 		background: white;
+		transform: translateY(-2000px);
 		>img {
 			width: 100%;
 		}
 	}
 
-	>.poms img {
-		position: fixed;
-		top: min(300px, 35vw);
-		left: calc(50vw - 100px);
-		width: 200px;
-		z-index: 1000;
-		opacity: 0;
-		transform: scale(0, 0);
+	>.poms {
+		img {
+			position: fixed;
+			top: min(300px, 35vw);
+			left: calc(50vw - 100px);
+			width: 200px;
+			z-index: 1000;
+			opacity: 0;
+			transform: scale(0, 0);
+		}
 	}
 }
 

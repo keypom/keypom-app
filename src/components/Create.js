@@ -10,8 +10,7 @@ import dJSON from 'dirty-json';
 
 
 const types = ['Simple', 'FT Drop', 'NFT Drop', 'Custom Call']
-const params = ['receiver_id', 'method_name', 'args', 'attached_deposit']
-const skip = ['account_id_field', 'drop_id_field']
+const params = ['receiver_id', 'method_name', 'args', 'attached_deposit', 'account_id_field', 'drop_id_field']
 // const functionCall = {
 // 	None: false,
 // 	receiver_id: '',
@@ -27,6 +26,8 @@ const functionCall = {
 	method_name: 'nft_mint',
 	args: '',
 	attached_deposit: '0.1',
+	account_id_field: 'receiver_id',
+	drop_id_field: 'id',
 }
 
 export const Create = ({ state, update, wallet }) => {
@@ -38,8 +39,6 @@ export const Create = ({ state, update, wallet }) => {
 		metadata: JSON.stringify({
 			media: 'https://cloudflare-ipfs.com/ipfs/bafybeih5sqn4rn2wo2me3clut4rxmamtzpaxjy734sfr76gwajlqettrf4'
 		}),
-		account_id_field: 'receiver_id',
-		drop_id_field: 'id',
 		...functionCall,
 	}])
 
@@ -166,11 +165,9 @@ export const Create = ({ state, update, wallet }) => {
 							on_claim_refund_deposit: true,
 						},
 						fc_data: {
-							config: {
-								account_id_field: customData[0].account_id_field,
-								drop_id_field: customData[0].drop_id_field
-							},
 							methods: customData.map((data) => data.None ? null : [{
+								account_id_field: data.account_id_field,
+								drop_id_field: data.drop_id_field,
 								receiver_id: data.receiver_id,
 								method_name: data.method_name,
 								args: data.args.length ? JSON.stringify(dJSON.parse(data.args)) : '',

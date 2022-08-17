@@ -34,7 +34,7 @@ export const Header = ({ pathname, menu, wallet, update }) => {
 					pathname.split('/').map((str, i) => <span key={str + i}>
 						{
 							pathname.split('/').length === i+1
-							? str
+							? str.substring(0, 12) + (str.length > 12 ? '...' : '')
 							: <Link to={'/' + str}>{ str }</Link>
 						}
 						&nbsp;

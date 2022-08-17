@@ -98,6 +98,8 @@ export const Contracts = ({ state, update, wallet }) => {
 		</>
 	}
 
+	if (!contracts || !contracts.length) return <p>No contracts deployed</p> 
+
 	return <>
 		<h4>Your Contracts</h4>
 

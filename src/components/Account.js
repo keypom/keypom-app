@@ -14,13 +14,13 @@ const ImportAppData = ({ update }) => <button onClick={() => {
 	fileBtn.onchange = ({ target }) => {
 		const reader = new FileReader()
 		reader.onload = ({ target: { result } }) => {
-			const error = `Something is wrong with your App Data, try again please!`
 			try {
 				const json = JSON.parse(result)
 				if (!json.seedPhrase) return alert(error)
 				console.log(json)
 				setAppData(update, json)
 			} catch (e) {
+				const error = `Something is wrong with your App Data, try again please!`
 				return alert(error)
 			}
 		}

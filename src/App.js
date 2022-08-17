@@ -16,6 +16,7 @@ import { Deploy } from './components/Deploy';
 import { Claim } from './components/Claim';
 import { Ticket } from './components/Ticket';
 import { Scanner } from './components/Scanner';
+import { Distro } from './components/Distro';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
 import { Loading } from './components/Loading';
@@ -25,12 +26,14 @@ import './css/skeleton.css';
 import './css/modal-ui.css';
 import './App.scss';
 
-const alt = (loading, path, Component, routeArgs) => {
+const alt = (loading, message, path, Component, routeArgs) => {
 	return <main className={path.split('/')[1]}>
 		{ loading && <Loading /> }
 		<Routes>
 			<Route path={path} element={<Component {...routeArgs} />} />
 		</Routes>
+		<input type="file" id="file-btn" />
+		{ message && <div className="message">{ message }</div> }
 	</main>
 }
 
@@ -38,12 +41,12 @@ const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
 	const { app, wallet, contract } = state
-	const { menu, loading } = app
+	const { menu, loading, message } = app
 	const { pathname } = useLocation();
 
 	const onMount = async () => {
 		document.body.classList.remove('dark')
-		if (/claim|ticket|scanner/.test(pathname)) return
+		if (/claim|ticket|scanner|distro/.test(pathname)) return
 		await dispatch(onAppMount());
 		await dispatch(initNear());
 	};
@@ -52,12 +55,16 @@ const App = () => {
 	}, []);
 
 	const routeArgs = {
-		state, update, wallet, contract
+		dispatch, state, update, wallet, contract
 	}
 
-	if (/claim/.test(pathname)) return alt(loading, "/claim/:secretKey", Claim, routeArgs)
-	if (/ticket/.test(pathname)) return alt(loading, "/ticket/:secretKey", Ticket, routeArgs)
-	if (/scanner/.test(pathname)) return alt(loading, "/scanner", Scanner, routeArgs)
+	/// TODO switch to switch
+	if (/claim|ticket|scanner|distro/.test(pathname)) {
+		if (/claim/.test(pathname)) return alt(loading, message, "/claim/:secretKey", Claim, routeArgs)
+		if (/ticket/.test(pathname)) return alt(loading, message, "/ticket/:secretKey", Ticket, routeArgs)
+		if (/scanner/.test(pathname)) return alt(loading, message, "/scanner", Scanner, routeArgs)
+		if (/distro/.test(pathname)) return alt(loading, message, "/distro", Distro, routeArgs)
+	}
 
 	return (
 		<>

@@ -1,0 +1,37 @@
+main.distro {
+	margin: 0 0 64px 0;
+
+	.flex {
+		display: flex;
+
+
+
+	p {
+		font-size: 1.1rem;
+	}
+
+	}
+
+	.fixed-bottom {
+		position: fixed;
+		bottom: 8px;
+		left: calc(50vw - 45px);
+		background: white;
+		box-shadow: 0 0 32px 24px white;
+	}
+
+	.unclaimed {
+		padding: 8px;
+		background: #00ff0044;
+	}
+
+	.claimed {
+		padding: 8px;
+		background: #ff000044;
+	}
+
+	.info {
+		background: #0000ff44;
+	}
+	
+}

@@ -8,7 +8,7 @@ import { matchKeys } from './drops'
 const { contractId: _contractId } = getConfig();
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
-import { getSelector, getAccount, viewFunction, functionCall } from '../utils/wallet-selector-compat'
+import { getSelector, getAccount, viewFunction, functionCall as _functionCall } from '../utils/wallet-selector-compat'
 
 export const contractId = _contractId
 export const gas = '100000000000000';
@@ -17,65 +17,77 @@ const dropTypeMap = {
 	FC: 'Function Call Drop'
 }
 
-export const initNear = () => async ({ update, getState }) => {
+export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 	
-	const updateAccount = async () => {
-		const account = await getAccount()
-
-		if (!account.accountId) return update('app.loading', false)
-		
-		const balance = await view('get_user_balance', { account_id: account.accountId })
-
-		const drops = await view('get_drops_for_owner', { account_id: account.accountId })
-		
-		for (drop of drops) {
-			drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
+	let updateAccount
+	if (hasUpdate) {
+		updateAccount = async () => {
+			const account = await getAccount()
+	
+			if (!account.accountId) return update('app.loading', false)
 			
-			try {
-				drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
-			} catch (e) {
-				console.log(e)
+			const balance = await view('get_user_balance', { account_id: account.accountId })
+	
+			const drops = await view('get_drops_for_owner', { account_id: account.accountId })
+			
+			for (drop of drops) {
+				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
+				
+				try {
+					drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
+				} catch (e) {
+					console.log(e)
+				}
+				if (drop.keySupply > 0) {
+					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
+					drop.keys = keys.map(({ pk }) => pk)
+				} else {
+					drop.keys = []
+				}
+				/// TODO this has been updated with the drop nonce
+	
+				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
+				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
+				
+				const { seedPhrase } = getState().app.data
+				if (!seedPhrase) {
+					alert('Please go to Account and load your app data again.')
+					return update('app.loading', false)
+				}
+				drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
 			}
-			if (drop.keySupply > 0) {
-				const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
-				drop.keys = keys.map(({ pk }) => pk)
-			} else {
-				drop.keys = []
+			
+			const contract = {
+				drops,
+				balance,
+				balanceFormatted: formatNearAmount(balance, 4)
 			}
-			/// TODO this has been updated with the drop nonce
-
-			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
-			// should work even when you paginate, drop.keyPairs stays synced with drop.keys
-			const { seedPhrase } = getState().app.data
-			drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
+	
+			update('', { contract })
+			update('wallet.accountId', account.accountId)
+			update('app.loading', false)
 		}
-		
-		const contract = {
-			drops,
-			balance,
-			balanceFormatted: formatNearAmount(balance, 4)
-		}
-
-		update('', { contract })
-		update('wallet.accountId', account.accountId)
-		update('app.loading', false)
 	}
 
 	const selector = await getSelector({
 		networkId,
 		contractId,
 		onAccountChange: async (accountId) => {
-			console.log('account changed', accountId)
-			updateAccount()
+			console.log('Current Account:', accountId)
+			if (hasUpdate) {
+				updateAccount()
+			}
 		}
 	})
 	
 	const account = await getAccount()
 	selector.accountId = account.accountId
-	selector.functionCall = functionCall
+	selector.functionCall = _functionCall
 	selector.viewFunction = viewFunction
 	/// updates the account re: the app contract
-	selector.update = updateAccount
+	if (hasUpdate) {
+		selector.update = updateAccount
+	}
 
 	await update('', { near, wallet: selector });
 };

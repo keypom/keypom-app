@@ -1,11 +1,12 @@
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { useEffect } from "react";
+import { file } from '../utils/store'
 
 import {
 	Link, useParams,
 } from "react-router-dom";
 import { contractId } from '../state/near'
-import { addKeys, claimDrop } from '../state/drops'
+import { addKeys, claimDrop, genKeys } from '../state/drops'
 
 export const Drops = ({ state, update, contract, wallet }) => {
 
@@ -48,8 +49,6 @@ export const Drops = ({ state, update, contract, wallet }) => {
 		const drop = drops.find((d) => d.drop_id === parseInt(which))
 		if (!drop) return <p>Can't find drop ID {which}</p>
 
-		console.log(drop)
-
 		return <>
 			<h4>Drop ID: {drop.drop_id}</h4>
 			<div className="row sm">
@@ -72,6 +71,11 @@ export const Drops = ({ state, update, contract, wallet }) => {
 				drop.keyPairs && <>
 
 					<h4>Keys {drop.keySupply}</h4>
+					<button onClick={async () => {
+						const keys = await genKeys(seedPhrase, drop.keySupply, drop.drop_id)
+						const links = keys.map(({secretKey}) => `https://keypom.xyz/ticket/${secretKey}`)
+						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
+					}}>Download All Ticket Links</button>
 					{
 						drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
 							<div className="row sm">

@@ -10,7 +10,8 @@ const initialState = {
 		mounted: false,
 		menu: false,
 		loading: true,
-		data: get(APP_DATA),
+		message: null,
+		data: get(APP_DATA) || { seedPhrase: null, contracts: [] },
 	},
 	wallet: {
 		isSignedIn: () => false
@@ -20,6 +21,10 @@ const initialState = {
 
 export const { appStore, AppProvider } = State(initialState, 'app');
 
+export const popMessage = (message) =>  async ({ update }) => {
+	update('app.message', message);
+	setTimeout(() => update('app.message', null), 3000)
+};
 // example app function
 export const onAppMount = () => async ({ update, getState, dispatch }) => {
 	update('app', { mounted: true });

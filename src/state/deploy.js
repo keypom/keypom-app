@@ -2,7 +2,6 @@ import { get, set, del } from '../utils/store'
 
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { insertAppDataArr } from "../state/app";
-import { handleDeploy } from '../state/deploy'
 import { contractId, accountExists, accountSuffix, txStatus, getState, getAccountWithMain, viewMethod } from "../state/near";
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
@@ -28,7 +27,7 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 
 	/// check if contract account was created yet
 
-	if (!contracts.includes(deploy.new_account_id)) {
+	if (!contracts || !contracts.includes(deploy.new_account_id)) {
 
 		/// have a proxy key to create account?
 		

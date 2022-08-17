@@ -1,6 +1,6 @@
 export const get = window.get = (k) => {
 	const v = localStorage.getItem(k);
-	if (v?.charAt(0) !== '{') {
+	if (!/\{|\[/.test(v?.charAt(0))) {
 		return v;
 	}
 	try {

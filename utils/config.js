@@ -1,4 +1,4 @@
-const contractName = 'keypom.testnet';
+const contractName = 'nearcon.keypom.testnet';
 
 module.exports = function getConfig(network = 'testnet') {
 	let config = {
