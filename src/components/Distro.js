@@ -16,7 +16,7 @@ const statusLabel = [
 	'attended',
 ]
 
-const BATCH_SIZE = 50
+const BATCH_SIZE = 25
 
 const checkLinks = async (update, links, cur = 0) => {
 	console.log('updating links', cur, BATCH_SIZE)
@@ -27,11 +27,7 @@ const checkLinks = async (update, links, cur = 0) => {
 		keyInfo = await view('get_key_information_batch', { keys })
 	} catch (e) {
 		console.warn(e)
-		alert('error updating keys, automatically reloading')
-		setTimeout(() => {
-			window.location.reload()
-			window.location.href = window.location.href
-		}, 2000)
+		return alert('error updating keys')
 	}
 
 	// console.log(keyInfo.map(({ key_info }) => key_info.remaining_uses))
