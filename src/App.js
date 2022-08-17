@@ -29,6 +29,9 @@ import './App.scss';
 const alt = (loading, message, path, Component, routeArgs) => {
 	return <main className={path.split('/')[1]}>
 		{ loading && <Loading /> }
+
+		I am testnet
+		
 		<Routes>
 			<Route path={path} element={<Component {...routeArgs} />} />
 		</Routes>
