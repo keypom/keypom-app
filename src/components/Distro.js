@@ -16,7 +16,7 @@ const statusLabel = [
 	'attended',
 ]
 
-const BATCH_SIZE = 25
+const BATCH_SIZE = 50
 
 const checkLinks = async (update, links, cur = 0) => {
 	console.log('updating links', cur, BATCH_SIZE)
