@@ -6,7 +6,7 @@ module.exports = function getConfig(network = process.env.REACT_APP_NETWORK_ID |
 	let config = {
 		networkId: "testnet",
 		nodeUrl: "https://rpc.testnet.near.org",
-		walletUrl: "https://wallet.testnet.near.org",
+		walletUrl: "https://testnet.mynearwallet.com",
 		helperUrl: "https://helper.testnet.near.org",
 		contractName,
 	};
@@ -31,7 +31,7 @@ module.exports = function getConfig(network = process.env.REACT_APP_NETWORK_ID |
 				...config,
 				networkId: "mainnet",
 				nodeUrl: "https://rpc.mainnet.near.org",
-				walletUrl: "https://wallet.near.org",
+				walletUrl: "https://app.mynearwallet.com",
 				helperUrl: "https://helper.near.org",
 				explorerUrl: "https://explorer.near.org",
 				GAS: "200000000000000",
