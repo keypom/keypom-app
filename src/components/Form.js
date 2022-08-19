@@ -21,7 +21,7 @@ const genFields = (data, values, onChange) => {
 			input.checked = values[k]
 		}
 		
-		return <div className="six columns" key={data.__ID + k}>
+		return <div className="six columns" key={k}>
 			<label htmlFor={k}>{k}</label>
 			<input {...input} />
 		</div>

@@ -32,7 +32,12 @@ const checkLinks = async (update, links, cur = 0) => {
 
 	// console.log(keyInfo.map(({ key_info }) => key_info.remaining_uses))
 
-	keyInfo.forEach(({ key_info }, i) => {
+	links = links.filter((_, i) => !!keyInfo[i])
+	keyInfo = keyInfo.filter((k) => !!k)
+
+	keyInfo.forEach((link, i) => {
+		if (!link) return
+		const { key_info } = link
 		links[cur + i].uses = key_info.remaining_uses
 	})
 
@@ -101,7 +106,7 @@ export const Distro = ({ update, dispatch }) => {
 				return <div key={link}>
 					<div className="row sm">
 						<div className="six columns">
-							<p>{i + 1}. {link.substring(link.length - 8)}</p>
+							<p>{i + 1}. {link.split('/ticket/')[1].substring(0, 8)}</p>
 						</div>
 						<div className="six columns flex">
 							{uses === 3 && <p className={shared ? 'claimed' : 'unclaimed'}>{shared ? 'shared' : 'not shared'}</p>}

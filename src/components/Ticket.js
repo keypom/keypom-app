@@ -7,6 +7,7 @@ import anime from 'animejs/lib/anime.es.js';
 import Keypom from '../img/keypom-small.png'
 
 import { view, call, getClaimAccount, initNear, networkId } from '../state/near'
+import { getDropInfo } from '../state/drops'
 
 import {
 	useParams,
@@ -14,7 +15,7 @@ import {
 
 import './Ticket.scss'
 
-const SECRET_KEY = '__SECRET_KEY'
+const DROP_AND_SECRET_KEY = '__DROP_AND_SECRET_KEY'
 const CLAIMED = '__CLAIMED'
 
 function openInNewTab(href) {
@@ -87,6 +88,13 @@ const genQR = (qr) => {
 	})
 }
 
+/** 
+ * 
+ * make sure localstorage is tied to drop_id instead of just any secretkey
+ * 
+ * poms are overlayed on top, make them disappear after animation
+ */
+
 export const Ticket = ({ dispatch, state, update, wallet }) => {
 
 	const qr = useRef();
@@ -96,14 +104,17 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 	const [drop, setDrop] = useState({})
 	const [claimed, setClaimed] = useState(!!get(CLAIMED))
 
-	let secretKey = get(SECRET_KEY)
+	let { id, secretKey } = get(DROP_AND_SECRET_KEY) || {}
 	const hasSecretKey = !!secretKey
 	if (!hasSecretKey) {
 		secretKey = useParams().secretKey
 		// don't visit another secret key if we've already activated one
 	} else if (window.location.href.indexOf(secretKey) === -1) {
-		window.location.href = window.location.origin + '/ticket/' + secretKey
-		return null
+		const { drop_id } = getDropInfo(secretKey)
+		if (drop_id === id) {
+			window.location.href = window.location.origin + '/ticket/' + secretKey
+			return null
+		}
 	}
 
 	const onMount = async () => {
@@ -134,7 +145,10 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 					}
 
 					poms()
-					set(SECRET_KEY, secretKey)
+					set(DROP_AND_SECRET_KEY, {
+						id: _drop.drop_id,
+						secretKey,
+					})
 				} catch (e) {
 					window.location.reload()
 					window.location.href = window.location.href

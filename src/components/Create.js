@@ -158,7 +158,7 @@ export const Create = ({ state, update, wallet }) => {
 
 					let args = {
 						public_keys: [],
-						deposit_per_use: '0',
+						deposit_per_use: '0.02',
 						metadata,
 						config: {
 							uses_per_key: customData.length,
@@ -175,8 +175,6 @@ export const Create = ({ state, update, wallet }) => {
 							}])
 						}
 					}
-
-					console.log(args)
 					
 					try {
 						const res = await call(wallet, 'create_drop', args)

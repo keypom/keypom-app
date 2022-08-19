@@ -31,18 +31,20 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 
 		/// have a proxy key to create account?
 		
+		let keyInfo
 		try {
-			await viewMethod({
+			keyInfo = await viewMethod({
 				methodName: 'get_key_information',
 				args: {
 					key: new_public_key
 				}
 			})
 		} catch(e) {
-			if (!/no drop/gi.test(e.toString())) {
-				throw e
-			}
+			console.warn(e)
+			throw e
+		}
 
+		if (!keyInfo) {
 			await wallet.functionCall({
 				contractId,
 				methodName: `create_drop`,

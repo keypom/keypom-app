@@ -50,7 +50,15 @@ export const Contracts = ({ state, update, wallet }) => {
 		return <>
 			<h3>Data</h3>
 			{
-				data.map((d) => <p>{JSON.stringify(d)}</p>)
+				data.map((d, i) => <>
+				<h4>Data {i}</h4>
+				{
+					d.map((d) => {
+						console.log(d)
+						return <p key={d.series_id}>{JSON.stringify(d)}</p>
+					})
+				}
+				</>)
 			}
 			<h3>Methods</h3>
 			{

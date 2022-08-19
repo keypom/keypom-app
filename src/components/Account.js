@@ -39,26 +39,30 @@ export const Account = ({ update, wallet, contract }) => {
 	const appData = getAppData()
 	const { balanceFormatted } = contract
 
-	const handleAddDeposit = () => {
+	const handleAddDeposit = async () => {
 		const howMuch = window.prompt('How much (in NEAR) would you like to add to your account?')
 		if (parseInt(howMuch) === NaN) return
 
-		console.log(howMuch)
-
-		wallet.functionCall({
+		update('app.loading', true)
+		await wallet.functionCall({
 			contractId,
 			methodName: `add_to_balance`,
 			gas: '100000000000000',
 			attachedDeposit: parseNearAmount(howMuch)
 		})
+		await wallet.update()
+		update('app.loading', false)
 	}
 
-	const handleWithdraw = () => {
-		wallet.functionCall({
+	const handleWithdraw = async () => {
+		update('app.loading', true)
+		await wallet.functionCall({
 			contractId,
 			methodName: `withdraw_from_balance`,
 			gas: '100000000000000',
 		})
+		await wallet.update()
+		update('app.loading', false)
 	}
 
 	return <>
