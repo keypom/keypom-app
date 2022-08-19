@@ -54,6 +54,7 @@ const contractAccount = new Account(connection, contractId);
 
 module.exports = {
 	near,
+	walletUrl,
 	networkId,
 	accountSuffix: networkId === 'mainnet' ? '.near' : '.testnet',
 	credentials,

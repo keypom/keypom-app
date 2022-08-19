@@ -1,8 +1,8 @@
 import * as nearAPI from 'near-api-js';
 const { WalletAccount, KeyPair } = nearAPI
 import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format";
-import { near, connection, networkId, keyStore, accountSuffix } from '../../utils/near-utils';
-export { accountSuffix, networkId } from '../../utils/near-utils';
+import { near, connection, networkId, keyStore, accountSuffix, contractId } from '../../utils/near-utils';
+export { accountSuffix, networkId, contractId, walletUrl } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
 import { matchKeys } from './drops'
 const { contractId: _contractId } = getConfig();
@@ -10,7 +10,6 @@ import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
 import { getSelector, getAccount, viewFunction, functionCall as _functionCall } from '../utils/wallet-selector-compat'
 
-export const contractId = _contractId
 export const gas = '100000000000000';
 
 const dropTypeMap = {

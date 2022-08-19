@@ -6,7 +6,7 @@ import { get, set, del } from '../utils/store'
 import anime from 'animejs/lib/anime.es.js';
 import Keypom from '../img/keypom-small.png'
 
-import { view, call, getClaimAccount, initNear, networkId } from '../state/near'
+import { view, call, getClaimAccount, initNear, networkId, walletUrl, contractId } from '../state/near'
 import { getDropInfo } from '../state/drops'
 
 import {
@@ -93,6 +93,8 @@ const genQR = (qr) => {
  * make sure localstorage is tied to drop_id instead of just any secretkey
  * 
  * poms are overlayed on top, make them disappear after animation
+ * 
+ * footer pom shows on load
  */
 
 export const Ticket = ({ dispatch, state, update, wallet }) => {
@@ -234,7 +236,12 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 									}
 								}}>Claim NFT</button>
 								:
-								<button onClick={() => wallet.signIn()}>Sign In to Claim NFT</button>
+								<>
+									<button onClick={() => {
+										window.open(walletUrl + '/linkdrop/' + contractId + '/' + secretKey)
+									}}>Claim NFT on MyNearWallet</button>
+									<button onClick={() => wallet.signIn()}>Sign In With Another Wallet</button>
+								</>
 						}
 					</>
 				}
