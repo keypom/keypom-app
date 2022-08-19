@@ -30,7 +30,7 @@ module.exports = function getConfig(network = process.env.REACT_APP_NETWORK_ID |
 			config = {
 				...config,
 				networkId: "mainnet",
-				nodeUrl: "https://rpc.near.org",
+				nodeUrl: "https://rpc.mainnet.near.org",
 				walletUrl: "https://wallet.near.org",
 				helperUrl: "https://helper.near.org",
 				explorerUrl: "https://explorer.near.org",
