@@ -9,22 +9,21 @@ import Keypom from '../img/keypom-small.png'
 import { view, call, getClaimAccount, initNear, networkId } from '../state/near'
 
 import {
-	Link, useParams,
+	useParams,
 } from "react-router-dom";
 
 import './Ticket.scss'
-import { functionCallAccessKey } from 'near-api-js/lib/transaction';
 
 const SECRET_KEY = '__SECRET_KEY'
 const CLAIMED = '__CLAIMED'
 
 function openInNewTab(href) {
 	Object.assign(document.createElement('a'), {
-	  target: '_blank',
-	  rel: 'noopener noreferrer',
-	  href: href,
+		target: '_blank',
+		rel: 'noopener noreferrer',
+		href: href,
 	}).click();
-  }
+}
 
 const poms = () => {
 	document.body.querySelector('.poms').style.display = 'block'
@@ -229,6 +228,32 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 					uses !== 1 && <div id="qr" ref={qr}></div>
 				}
 			</>}
+
+		<div className="footer">
+			<img onClick={({ target }) => {
+				anime({
+					targets: target,
+					duration: 0,
+					scale: 1,
+					complete: () => {
+						anime({
+							targets: target,
+							scale: 4,
+							easing: 'easeOutCubic',
+							duration: 150,
+							complete: () => {
+								anime({
+									targets: target,
+									scale: 1,
+									easing: 'easeInCubic',
+									duration: 150,
+								});
+							}
+						});
+					}
+				});
+			}} src={Keypom} />
+		</div>
 	</>
 
 }

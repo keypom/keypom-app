@@ -1,9 +1,12 @@
 import {
-	Link
+	Link,
+	useNavigate
 } from "react-router-dom";
 
 export const SidebarLinks = ({ pathname, update, wallet }) => {
 	const hideMenu = () => update('app.menu', false)
+
+	const navigate = useNavigate()
 
 	switch (pathname.substring(1)) {
 		case 'account':
@@ -11,6 +14,7 @@ export const SidebarLinks = ({ pathname, update, wallet }) => {
 				<Link onClick={() => {
 					wallet.signOut()
 					hideMenu()
+					navigate('/')
 				}} to="/">Sign Out</Link>
 			</nav>
 		break;

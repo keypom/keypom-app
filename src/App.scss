@@ -37,11 +37,25 @@ main {
     top: 8px;
     left: 8px;
     width: calc(100% - 16px);
-    padding: 16px;
-    background: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 32px 24px white;
     animation: slide 0.32s ease-out;
+    display: flex;
+    > div {
+        margin:auto;
+        width: calc(100% - 16px);
+        max-width: 500px;
+        padding: 16px;
+        background: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 32px 24px white;
+    }
+}
+
+.footer {
+    margin-top: 64px;
+    text-align: center;
+    > img {
+        width: 100px;
+    }
 }
 
 @keyframes slide {

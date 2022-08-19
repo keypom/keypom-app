@@ -3,6 +3,7 @@ import {
 	Routes,
 	Route,
 	useLocation,
+	useSearchParams,
 } from "react-router-dom";
 
 import { appStore, onAppMount } from './state/app';
@@ -20,6 +21,10 @@ import { Distro } from './components/Distro';
 import { Account } from './components/Account';
 import { Home } from './components/Home';
 import { Loading } from './components/Loading';
+import { Message } from './components/Message';
+
+import anime from 'animejs/lib/anime.es.js';
+import Keypom from './img/keypom-small.png'
 
 import './css/normalize.css';
 import './css/skeleton.css';
@@ -33,7 +38,7 @@ const alt = (loading, message, path, Component, routeArgs) => {
 			<Route path={path} element={<Component {...routeArgs} />} />
 		</Routes>
 		<input type="file" id="file-btn" />
-		{ message && <div className="message">{ message }</div> }
+		{ message && <Message {...{message}} /> }
 	</main>
 }
 
@@ -43,6 +48,7 @@ const App = () => {
 	const { app, wallet, contract } = state
 	const { menu, loading, message } = app
 	const { pathname } = useLocation();
+	const [search] = useSearchParams();
 
 	const onMount = async () => {
 		document.body.classList.remove('dark')
@@ -56,6 +62,35 @@ const App = () => {
 
 	const routeArgs = {
 		dispatch, state, update, wallet, contract
+	}
+
+	if (pathname === '/' && search.get('v') !== '42') {
+		return <div className='footer'>
+			<img onClick={({ target }) => {
+				anime({
+					targets: target,
+					duration: 0,
+					scale: 1,
+					complete: () => {
+						anime({
+							targets: target,
+							scale: 4,
+							easing: 'easeOutCubic',
+							duration: 150,
+							complete: () => {
+								anime({
+									targets: target,
+									scale: 1,
+									easing: 'easeInCubic',
+									duration: 150,
+								});
+							}
+						});
+					}
+				});
+			}} src={Keypom} />
+			<p>Keypom is lit!</p>
+		</div>
 	}
 
 	/// TODO switch to switch

@@ -2,15 +2,16 @@ main.distro {
 	margin: 0 auto 64px auto;
 	max-width: 500px;
 
+	button:disabled {
+		opacity: 0.25;
+	}
+
 	.flex {
 		display: flex;
-
-
+	}
 
 	p {
 		font-size: 1.1rem;
-	}
-
 	}
 
 	.fixed-bottom {
@@ -29,6 +30,11 @@ main.distro {
 	.claimed {
 		padding: 8px;
 		background: #ff000044;
+	}
+
+	.attended {
+		padding: 8px;
+		background: #ff000088;
 	}
 
 	.info {

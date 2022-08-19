@@ -7,7 +7,7 @@ import {
 	useNavigate
 } from "react-router-dom";
 
-const ImportAppData = ({ update }) => <button onClick={() => {
+const ImportAppData = ({ update, wallet }) => <button onClick={() => {
 	const confirm = window.confirm(`Do you want to remove all current app data and replace it? Make sure you export app data first!`)
 	if (!confirm) return
 	const fileBtn = document.querySelector('#file-btn')
@@ -19,6 +19,7 @@ const ImportAppData = ({ update }) => <button onClick={() => {
 				if (!json.seedPhrase) return alert(error)
 				console.log(json)
 				setAppData(update, json)
+				wallet.update()
 			} catch (e) {
 				const error = `Something is wrong with your App Data, try again please!`
 				return alert(error)
@@ -62,7 +63,10 @@ export const Account = ({ update, wallet, contract }) => {
 
 	return <>
 		<h4>{wallet.accountId}</h4>
-		<button onClick={() => wallet.signOut()}>Sign Out</button>
+		<button onClick={() => {
+			wallet.signOut()
+			navigate('/')
+		}}>Sign Out</button>
 
 		<h4>Balance {balanceFormatted}</h4>
 		<button onClick={handleAddDeposit}>Add Deposit</button>
@@ -75,14 +79,14 @@ export const Account = ({ update, wallet, contract }) => {
 					<button onClick={() => {
 						file('ProxyAppData.json', JSON.stringify(appData))
 					}}>Export App Data</button>
-					<ImportAppData {...{ update }} />
+					<ImportAppData {...{ update, wallet }} />
 					<button onClick={() => {
 						setAppData(update, null)
 					}}>Clear App Data</button>
 				</div>
 				:
 				<div>
-					<ImportAppData {...{ update }} />
+					<ImportAppData {...{ update, wallet }} />
 					<button onClick={() => {
 						alert(`You're going to create a main key for using this app. You should keep it somewhere safe. DO NOT SHARE IT!`)
 						const trySeedPhrase = () => {

@@ -1,5 +1,5 @@
 main.ticket {
-	margin: -32px 0 64px 0;
+	margin: -16px 0 64px 0;
 	text-align: center;
 	color: white;
 
@@ -21,13 +21,13 @@ main.ticket {
 		box-shadow:
 			0 0 16px 4px #ffffff22,
 			0 0 24px 2px #ffffff22,
-			0 0 32px 0px #ff00ff44;
+			0 0 32px 0px #ff00ff22;
 	}
 
 	>#qr {
 		margin: auto;
 		max-width: 500px;
-		padding: 1.5rem;
+		padding: 16px;
 		background: white;
 		transform: translateY(-2000px);
 		>img {
