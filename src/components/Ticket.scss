@@ -8,20 +8,22 @@ main.ticket {
 	}
 
 	>button {
-		background: white;
-		color: black;
+		display: block;
+		background: black;
+		color: white;
 		border-color: white;
-		margin: 0 8px 32px 8px !important;
+		margin: 0 auto 32px auto !important;
 	}
 
 	>img {
+		border-radius: 12px;
 		display: block;
 		max-width: 100%;
 		margin: 32px auto;
 		box-shadow:
-			0 0 16px 4px #ffffff22,
-			0 0 24px 2px #ffffff22,
-			0 0 32px 0px #ff00ff22;
+			0 0 8px 0 #ffffff66,
+			0 0 24px 0 #ffffff22,
+			0 0 32px 0 #ff00ff44;
 	}
 
 	>#qr {

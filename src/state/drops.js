@@ -1,13 +1,7 @@
 import * as nearAPI from 'near-api-js';
 const { KeyPair } = nearAPI
 import { parseSeedPhrase, generateSeedPhrase } from "near-seed-phrase"
-import { view, contractId, getClaimAccount } from './near'
-
-export const getDropInfo = (secretKey) => {
-	const _keyPair = KeyPair.fromString(secretKey)
-	setKeyPair(_keyPair)
-	view('get_drop_information', { key: _keyPair.publicKey.toString() })
-}
+import { contractId, getClaimAccount } from './near'
 
 const hashBuf = (str) => crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
 

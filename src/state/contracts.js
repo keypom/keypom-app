@@ -4,10 +4,22 @@ import { insertAppDataArr, removeAppDataArr } from "../state/app";
 
 export const explorerLink = (contractId) => `https://explorer.${networkId}.near.org/accounts/${contractId}`
 
-export const removeContract = (update, contractId) => {
-	const confirm = window.confirm(`Really remove reference to ${contractId} from your app data?`)
+export const removeContract = async (wallet, update, contractId) => {
+	const confirm = window.confirm(`Really delete ${contractId} contract? This will remove all NFTs and any data!!!`)
 	if (!confirm) return
-	removeAppDataArr(update, 'contracts', contractId)
+	update('app.loading', true)
+	try {
+		const contractAccount = getAccountWithMain(contractId)
+		await contractAccount.deleteAccount(wallet.accountId)
+		removeAppDataArr(update, 'contracts', contractId)
+	} catch(e) {
+		if (/Can not sign transactions for account/.test(e.toString())) {
+			removeAppDataArr(update, 'contracts', contractId)
+		}
+		console.warn(e)
+	} finally {
+		update('app.loading', false)
+	}
 }
 
 export const updateContract = async (update, contractId) => {

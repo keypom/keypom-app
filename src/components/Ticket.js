@@ -7,7 +7,6 @@ import anime from 'animejs/lib/anime.es.js';
 import Keypom from '../img/keypom-small.png'
 
 import { view, call, getClaimAccount, initNear, networkId, walletUrl, contractId } from '../state/near'
-import { getDropInfo } from '../state/drops'
 
 import {
 	useParams,
@@ -50,6 +49,9 @@ const poms = () => {
 				easing: 'easeOutQuad',
 				duration: 2500,
 				delay: anime.stagger(300),
+				complete: () => {
+					document.querySelectorAll('.poms > img').forEach((p) => p.style.display = 'none')
+				}
 			});
 		}
 	});
@@ -90,45 +92,52 @@ const genQR = (qr) => {
 
 /** 
  * 
- * make sure localstorage is tied to drop_id instead of just any secretkey
+ * TODO check the new metadata.id enforcement
  * 
- * poms are overlayed on top, make them disappear after animation
- * 
- * footer pom shows on load
  */
 
 export const Ticket = ({ dispatch, state, update, wallet }) => {
 
 	const qr = useRef();
+	const paramSecretKey = useParams().secretKey
 
 	const [keyPair, setKeyPair] = useState({})
 	const [keyInfo, setKeyInfo] = useState({})
 	const [drop, setDrop] = useState({})
 	const [claimed, setClaimed] = useState(!!get(CLAIMED))
 
-	let { id, secretKey } = get(DROP_AND_SECRET_KEY) || {}
-	const hasSecretKey = !!secretKey
-	if (!hasSecretKey) {
-		secretKey = useParams().secretKey
-		// don't visit another secret key if we've already activated one
-	} else if (window.location.href.indexOf(secretKey) === -1) {
-		const { drop_id } = getDropInfo(secretKey)
-		if (drop_id === id) {
-			window.location.href = window.location.origin + '/ticket/' + secretKey
-			return null
-		}
-	}
-
 	const onMount = async () => {
 		setTimeout(() => document.body.classList.add('dark'), 10)
 
 		update('app.loading', true)
 		try {
-			const _keyPair = KeyPair.fromString(secretKey)
-			setKeyPair(_keyPair)
+			let { id, secretKey } = get(DROP_AND_SECRET_KEY) || {}
+			const hasSecretKey = !!secretKey
+			if (!hasSecretKey) {
+				secretKey = paramSecretKey
+				// don't visit another secret key if we've already activated one
+			} else if (window.location.href.indexOf(secretKey) === -1) {
+				const _keyPair = KeyPair.fromString(paramSecretKey)
+				const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 
+				let { drop_id } = _drop
+				// use metadata.id if it exists (catch all for multiple drops per event)
+				try {
+					const metadata = JSON.parse(_drop.metadata)
+					if (metadata.id) drop_id = metadata.id
+				} catch(e) {}
+				if (drop_id === id) {
+					window.location.href = window.location.origin + '/ticket/' + secretKey
+					return null
+				}
+			}
+			
+			const _keyPair = KeyPair.fromString(secretKey)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
+			
+			setKeyPair(_keyPair)
 			// console.log(_drop)
+
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_keyInfo)
 
@@ -147,8 +156,17 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 					}
 
 					poms()
+
+					let id = _drop.drop_id
+					// use metadata.id if it exists (catch all for multiple drops per event)
+					try {
+						const metadata = JSON.parse(_drop.metadata)
+						console.log(metadata)
+						if (metadata.id) id = metadata.id
+					} catch(e) {}
+
 					set(DROP_AND_SECRET_KEY, {
-						id: _drop.drop_id,
+						id,
 						secretKey,
 					})
 				} catch (e) {
@@ -159,7 +177,10 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 
 			setKeyInfo(_keyInfo)
 			setDrop(_drop)
-			setTimeout(() => genQR(qr), uses === 3 ? 1500 : 100)
+			setTimeout(() => {
+				genQR(qr)
+				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
+			}, uses === 3 ? 1500 : 100)
 
 		} catch (e) {
 			console.warn(e)
@@ -177,9 +198,6 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 		metadata = JSON.parse(drop.metadata)
 	}
 	const uses = keyInfo?.key_info?.remaining_uses
-
-
-	console.log(claimed)
 
 	return <>
 
@@ -238,7 +256,7 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 								:
 								<>
 									<button onClick={() => {
-										window.open(walletUrl + '/linkdrop/' + contractId + '/' + secretKey)
+										window.open(walletUrl + '/linkdrop/' + contractId + '/' + keyPair.secretKey)
 									}}>Claim NFT on MyNearWallet</button>
 									<button onClick={() => wallet.signIn()}>Sign In With Another Wallet</button>
 								</>
@@ -250,7 +268,7 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 				}
 			</>}
 
-		<div className="footer">
+		<div className="footer" style={{display: 'none'}}>
 			<img onClick={({ target }) => {
 				anime({
 					targets: target,

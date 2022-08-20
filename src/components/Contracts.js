@@ -26,13 +26,14 @@ export const Contracts = ({ state, update, wallet }) => {
 			contract = contractBySpec(metadata.spec)
 
 			if (contract.data) {
-				const res = await Promise.all(Object.entries(contract.data).map(([methodName, args]) => 
+				const res = await Promise.all(Object.entries(contract.data).map(([methodName, args]) =>
 					viewMethod({ contractId: which, methodName, args })
 				))
 				setData(res)
 				console.log(res)
 			}
 
+			console.log('here')
 			const series = await viewMethod({ contractId: which, methodName: 'nft_metadata' })
 			if (!contract) return
 		} catch (e) {
@@ -48,17 +49,21 @@ export const Contracts = ({ state, update, wallet }) => {
 	if (which) {
 		if (!interact) return <p>Cannot find contract by spec or interaction data</p>
 		return <>
-			<h3>Data</h3>
 			{
-				data.map((d, i) => <>
-				<h4>Data {i}</h4>
-				{
-					d.map((d) => {
-						console.log(d)
-						return <p key={d.series_id}>{JSON.stringify(d)}</p>
-					})
-				}
-				</>)
+				data.length > 0 && data[0].length > 0 && <>
+					<h3>Data</h3>
+					{
+						data.map((d, i) => <div key={i}>
+							<h4>Data {i}</h4>
+							{
+								d.map((d) => {
+									console.log(d)
+									return <p key={d.series_id}>{JSON.stringify(d)}</p>
+								})
+							}
+						</div>)
+					}
+				</>
 			}
 			<h3>Methods</h3>
 			{
@@ -89,7 +94,7 @@ export const Contracts = ({ state, update, wallet }) => {
 									}
 									args[k] = v
 								})
-								
+
 								const res = await wallet.functionCall({
 									contractId: which,
 									methodName: k,
@@ -106,7 +111,10 @@ export const Contracts = ({ state, update, wallet }) => {
 		</>
 	}
 
-	if (!contracts || !contracts.length) return <p>No contracts deployed</p> 
+	if (!contracts || !contracts.length) return <>
+		<p>No contracts deployed</p>
+		<Link to={'/deploy'}><button>Deploy a Contract</button></Link>
+	</>
 
 	return <>
 		<h4>Your Contracts</h4>
@@ -134,7 +142,7 @@ export const Contracts = ({ state, update, wallet }) => {
 				</div>
 				<div className="row sm">
 					<div className="six columns">
-						<button className="button-warning" onClick={() => removeContract(update, contractId)}>Remove</button>
+						<button className="button-warning" onClick={() => removeContract(wallet, update, contractId)}>Remove</button>
 					</div>
 				</div>
 

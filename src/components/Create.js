@@ -158,7 +158,7 @@ export const Create = ({ state, update, wallet }) => {
 
 					let args = {
 						public_keys: [],
-						deposit_per_use: '0.02',
+						deposit_per_use: parseNearAmount('0.02'),
 						metadata,
 						config: {
 							uses_per_key: customData.length,

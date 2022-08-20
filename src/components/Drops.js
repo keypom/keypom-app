@@ -129,6 +129,8 @@ export const Drops = ({ state, update, contract, wallet }) => {
 				</div>
 			</div>)
 		}
+		<br/>
+		<Link to={'/create'}><button>Create a Drop</button></Link>
 	</>
 
 }

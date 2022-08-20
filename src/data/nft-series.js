@@ -21,7 +21,7 @@ export const nftSeries = {
 	interact: {
 		create_series: {
 			form: {
-				id: 1,
+				mint_id: 1,
 				media: '',
 				copies: 10,
 				royalty_receiver: '',
@@ -34,12 +34,12 @@ export const nftSeries = {
 			number: ['id', 'copies'],
 			deposit: '0.1'
 		},
-		update_series_id: {
+		update_mint_id: {
 			form: {
-				current_id: 1,
-				new_id: 2,
+				old_mint_id: 1,
+				new_mint_id: 2,
 			},
-			number: ['current_id', 'new_id'],
+			number: ['old_mint_id', 'new_mint_id'],
 		},
 		add_approved_minter: {
 			form: {
