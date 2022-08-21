@@ -125,16 +125,16 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 				try {
 					const metadata = JSON.parse(_drop.metadata)
 					if (metadata.id) drop_id = metadata.id
-				} catch(e) {}
+				} catch (e) { }
 				if (drop_id === id) {
 					window.location.href = window.location.origin + '/ticket/' + secretKey
 					return null
 				}
 			}
-			
+
 			const _keyPair = KeyPair.fromString(secretKey)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
-			
+
 			setKeyPair(_keyPair)
 			// console.log(_drop)
 
@@ -163,7 +163,7 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 						const metadata = JSON.parse(_drop.metadata)
 						console.log(metadata)
 						if (metadata.id) id = metadata.id
-					} catch(e) {}
+					} catch (e) { }
 
 					set(DROP_AND_SECRET_KEY, {
 						id,
@@ -268,7 +268,7 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 				}
 			</>}
 
-		<div className="footer" style={{display: 'none'}}>
+		<div className="footer" style={{ display: 'none' }}>
 			<img onClick={({ target }) => {
 				anime({
 					targets: target,
@@ -292,6 +292,9 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 					}
 				});
 			}} src={Keypom} />
+			<p>
+				😍 Keypom Launch Talk at <a href="https://nearcon.org" target="_blank">NEARCON</a> 👀
+			</p>
 		</div>
 	</>
 

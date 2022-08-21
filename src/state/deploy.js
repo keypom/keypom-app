@@ -18,7 +18,7 @@ export const contractBySpec = (spec) => Object.values(contracts).find(({ form: {
 const DEPLOY = `__DEPLOY`
 
 export const checkDeploy = async ({ state, wallet, update }) => {
-	
+
 	const deploy = get(DEPLOY)
 	if (!deploy) return update('app.loading', false)
 
@@ -30,7 +30,7 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 	if (!contracts || !contracts.includes(deploy.new_account_id)) {
 
 		/// have a proxy key to create account?
-		
+
 		let keyInfo
 		try {
 			keyInfo = await viewMethod({
@@ -39,28 +39,36 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 					key: new_public_key
 				}
 			})
-		} catch(e) {
+		} catch (e) {
 			console.warn(e)
 			throw e
 		}
 
 		if (!keyInfo) {
-			await wallet.functionCall({
-				contractId,
-				methodName: `create_drop`,
-				gas: '100000000000000',
-				args: {
-					public_keys: [new_public_key],
-					deposit_per_use: parseNearAmount(values.NEAR.toString() || '5'),
-					drop_config: {
-						max_claims_per_key: 1,
+			try {
+				await wallet.functionCall({
+					contractId,
+					methodName: `create_drop`,
+					gas: '100000000000000',
+					args: {
+						public_keys: [new_public_key],
+						deposit_per_use: parseNearAmount(values.NEAR.toString() || '5'),
+						drop_config: {
+							max_claims_per_key: 1,
+						}
 					}
+				})
+			} catch (e) {
+				if (/No user balance|Not enough attached/.test(e.toString())) {
+					del(DEPLOY)
+					return alert('Not enough NEAR in account')
 				}
-			})
+				throw e
+			}
 		}
 
 		/// NOTE could have been front run on account_id if it was attempted before
-	
+
 		if (!(await accountExists(deploy.new_account_id))) {
 			const claimAccount = getAccountWithMain(contractId)
 
@@ -102,7 +110,7 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 
 	try {
 		await viewMethod({ contractId: new_account_id, methodName: 'nft_tokens' })
-	} catch(e) {
+	} catch (e) {
 		if (!/The contract is not initialized/gi.test(e.toString())) {
 			throw e
 		}
@@ -126,7 +134,7 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 
 		del(DEPLOY)
 	}
-	
+
 	update('app.loading', false)
 }
 

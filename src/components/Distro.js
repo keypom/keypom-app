@@ -11,15 +11,16 @@ const LINKS = '__DISTRO_LINKS'
 import './Distro.scss'
 
 const statusLabel = [
-	'unclaimed',
-	'claimed',
+	'available',
+	'clicked',
 	'attended',
+	'claimed'
 ]
 
-const BATCH_SIZE = 50
+const BATCH_SIZE = 100
 
 const checkLinks = async (update, links, cur = 0) => {
-	console.log('updating links', cur, BATCH_SIZE)
+	console.log('updating links', cur, cur + BATCH_SIZE)
 
 	const keys = links.slice(cur, cur + BATCH_SIZE).map(({ link }) => KeyPair.fromString(link.split('/ticket/')[1]).publicKey.toString())
 	let keyInfo
@@ -32,16 +33,18 @@ const checkLinks = async (update, links, cur = 0) => {
 
 	// console.log(keyInfo.map(({ key_info }) => key_info.remaining_uses))
 
-	links = links.filter((_, i) => !!keyInfo[i])
-	keyInfo = keyInfo.filter((k) => !!k)
-
-	keyInfo.forEach((link, i) => {
-		if (!link) return
-		const { key_info } = link
-		links[cur + i].uses = key_info.remaining_uses
+	keyInfo.forEach((info, i) => {
+		i += cur
+		if (!info) {
+			links[i].uses = 0
+			return
+		}
+		const { key_info } = info
+		links[i].uses = key_info.remaining_uses
 	})
 
 	links.forEach((_, i) => {
+		i += cur
 		if (networkId !== 'testnet') return
 		links[i].link = links[i].link.replace('https://', 'https://testnet.')
 	})
@@ -91,6 +94,8 @@ export const Distro = ({ update, dispatch }) => {
 		onMount()
 	}, [])
 
+	console.log(links.length)
+
 	return <>
 		<ImportLinks {...{ links, update: setLinks }} />
 		<h4>Links</h4>
@@ -101,15 +106,13 @@ export const Distro = ({ update, dispatch }) => {
 			links.map(({ uses, link, shared }, i) => {
 				const status = statusLabel[3 - uses]
 
-				console.log(uses)
-
 				return <div key={link}>
 					<div className="row sm">
 						<div className="six columns">
 							<p>{i + 1}. {link.split('/ticket/')[1].substring(0, 8)}</p>
 						</div>
 						<div className="six columns flex">
-							{uses === 3 && <p className={shared ? 'claimed' : 'unclaimed'}>{shared ? 'shared' : 'not shared'}</p>}
+							{uses === 3 && <p className={shared ? 'clicked' : 'available'}>{shared ? 'shared' : 'not shared'}</p>}
 							<p className={status}>{status}</p>
 						</div>
 					</div>

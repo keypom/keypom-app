@@ -56,7 +56,11 @@ export const Drops = ({ state, update, contract, wallet }) => {
 					<button onClick={async () => {
 						update('app.loading', true)
 						const num = window.prompt(`How many keys would you like to add to the drop?`)
-						if (!num) return update('app.loading', false)
+						const parsedNum = parseInt(num)
+						if (!num || isNaN(parsedNum) || parsedNum > 100 || parsedNum < 1) {
+							alert('Please enter a number between 1-100')
+							return update('app.loading', false)
+						}
 						const res = await addKeys(seedPhrase, wallet, drop, parseInt(num))
 						console.log(res)
 						await wallet.update()
@@ -72,7 +76,9 @@ export const Drops = ({ state, update, contract, wallet }) => {
 
 					<h4>Keys {drop.keySupply}</h4>
 					<button onClick={async () => {
-						const keys = await genKeys(seedPhrase, drop.keySupply, drop.drop_id)
+						update('app.loading', true)
+						const keys = await genKeys(seedPhrase, drop.next_key_id, drop.drop_id)
+						update('app.loading', false)
 						const links = keys.map(({secretKey}) => `https://keypom.xyz/ticket/${secretKey}`)
 						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>

@@ -1,13 +1,14 @@
 import * as nearAPI from 'near-api-js';
 const { KeyPair } = nearAPI
 import { parseSeedPhrase, generateSeedPhrase } from "near-seed-phrase"
-import { contractId, getClaimAccount } from './near'
+import { gas, contractId, getClaimAccount } from './near'
 
 const hashBuf = (str) => crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
 
 export const addKeys = async (seedPhrase, account, drop, num) => {
 	const { drop_id } = drop
-	const keys = await genKeys(seedPhrase, num, drop_id, drop.next_key_nonce)
+
+	const keys = await genKeys(seedPhrase, num, drop_id, drop.next_key_id)
 	args = {
 		drop_id,
 		public_keys: keys.map(({ publicKey }) => publicKey.toString()),
@@ -16,7 +17,7 @@ export const addKeys = async (seedPhrase, account, drop, num) => {
 		contractId,
 		methodName: 'add_keys',
 		args,
-		gas: '100000000000000',
+		gas: '300000000000000',
 	})
 	return res
 }
@@ -29,7 +30,7 @@ export const claimDrop = async (accountId, secretKey) => {
 		args: {
 			account_id: accountId
 		},
-		gas: '100000000000000',
+		gas,
 	})
 	return res
 }
