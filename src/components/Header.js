@@ -22,7 +22,7 @@ const Links = ({ update, wallet }) => {
 	</nav>
 }
 
-export default Header = ({ pathname, menu, wallet, update }) => {
+const Header = ({ pathname, menu, wallet, update }) => {
 
 	return <header>
 		<div>
@@ -50,3 +50,4 @@ export default Header = ({ pathname, menu, wallet, update }) => {
 		</div>}
 	</header>
 }
+export default Header

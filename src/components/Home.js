@@ -1,11 +1,10 @@
 import React from 'react'
 
-import { Menu } from 'react-feather';
-
-export default Home = ({ state, update }) => {
+const Home = ({ state, update }) => {
 	return <div>
 
 	<p>Welcome</p>
 
 	</div>
 }
+export default Home

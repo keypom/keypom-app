@@ -10,7 +10,7 @@ import { handleDeploy, checkDeploy } from '../state/deploy'
 import { contracts } from "../state/deploy"
 const { nftSimple, nftSeries } = contracts
 
-export default Deploy = ({ state, update, wallet }) => {
+const Deploy = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
 	const { what } = useParams()
@@ -75,3 +75,5 @@ export default Deploy = ({ state, update, wallet }) => {
 			</div>
 	}
 }
+
+export default Deploy

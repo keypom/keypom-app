@@ -21,7 +21,7 @@ const claim = async (secretKey) => {
 	return false
 }
 
-export default Scanner = ({ state, update, wallet }) => {
+const Scanner = ({ state, update, wallet }) => {
 
 	const { loading } = state.app
 	const [valid, setValid] = useState(null);
@@ -83,3 +83,6 @@ export default Scanner = ({ state, update, wallet }) => {
 	</>
 
 }
+
+
+export default Scanner

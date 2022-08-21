@@ -30,7 +30,7 @@ const functionCall = {
 	drop_id_field: 'mint_id',
 }
 
-export default Create = ({ state, update, wallet }) => {
+const Create = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
 	const [type, setType] = useState('Simple')
@@ -209,3 +209,5 @@ export default Create = ({ state, update, wallet }) => {
 	</>
 
 }
+
+export default Create

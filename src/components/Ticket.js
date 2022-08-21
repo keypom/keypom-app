@@ -108,7 +108,7 @@ const genQR = (qr) => {
  * 
  */
 
-export default Ticket = ({ dispatch, state, update, wallet }) => {
+const Ticket = ({ dispatch, state, update, wallet }) => {
 
 	const qr = useRef();
 	const paramSecretKey = useParams().secretKey
@@ -314,3 +314,5 @@ export default Ticket = ({ dispatch, state, update, wallet }) => {
 	</>
 
 }
+
+export default Ticket
