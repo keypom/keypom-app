@@ -27,7 +27,7 @@ const functionCall = {
 	args: '',
 	attached_deposit: '0.1',
 	account_id_field: 'receiver_id',
-	drop_id_field: 'id',
+	drop_id_field: 'mint_id',
 }
 
 export const Create = ({ state, update, wallet }) => {
@@ -37,7 +37,7 @@ export const Create = ({ state, update, wallet }) => {
 	const [customData, setCustomData] = useState([{
 		Keys: 0,
 		metadata: JSON.stringify({
-			media: 'https://cloudflare-ipfs.com/ipfs/bafybeih5sqn4rn2wo2me3clut4rxmamtzpaxjy734sfr76gwajlqettrf4'
+			media: 'https://cloudflare-ipfs.com/ipfs/bafybeih5sqn4rn2wo2me3clut4rxmamtzpaxjy734sfr76gwajlqettrf4', id: 'nearcon-opening-night',
 		}),
 		...functionCall,
 	}])

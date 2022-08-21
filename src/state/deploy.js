@@ -118,6 +118,7 @@ export const checkDeploy = async ({ state, wallet, update }) => {
 					spec: values.spec,
 					name: values.name,
 					symbol: values.symbol,
+					base_uri: 'https://cloudflare-ipfs.com/ipfs/'
 				}
 			}
 		})

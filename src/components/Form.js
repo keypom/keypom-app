@@ -23,7 +23,12 @@ const genFields = (data, values, onChange) => {
 		
 		return <div className="six columns" key={k}>
 			<label htmlFor={k}>{k}</label>
-			<input {...input} />
+			{
+				v.toString().length > 64 ? 
+				<textarea {...input} />
+				:
+				<input {...input} />
+			}
 		</div>
 	})
 }

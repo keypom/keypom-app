@@ -111,48 +111,54 @@ export const Contracts = ({ state, update, wallet }) => {
 		</>
 	}
 
-	if (!contracts || !contracts.length) return <>
-		<p>No contracts deployed</p>
-		<Link to={'/deploy'}><button>Deploy a Contract</button></Link>
-	</>
-
 	return <>
-		<h4>Your Contracts</h4>
 
 		{
-			contracts.map((contractId) => <div key={contractId}>
-				<div className="row sm">
-					<div className="six columns">
-						<p>{contractId}</p>
-					</div>
-					<div className="six columns">
-						<a href={explorerLink(contractId)} target="_blank" rel="noopener noreferrer">
-							<button>Explorer</button>
-						</a>
-					</div>
-				</div>
+			(!contracts || !contracts.length) ? <>
+				<p>No contracts deployed</p>
+			</>
+				:
+				<>
+					<h4>Your Contracts</h4>
 
-				<div className="row sm">
-					<div className="six columns">
-						<Link to={`/contracts/${contractId}`}><button>Interact</button></Link>
-					</div>
-					<div className="six columns">
-						<button onClick={() => updateContract(update, contractId)}>Update</button>
-					</div>
-				</div>
-				<div className="row sm">
-					<div className="six columns">
-						<button className="button-warning" onClick={() => removeContract(wallet, update, contractId)}>Remove</button>
-					</div>
-				</div>
+					{
+						contracts.map((contractId) => <div key={contractId}>
+							<div className="row sm">
+								<div className="six columns">
+									<p>{contractId}</p>
+								</div>
+								<div className="six columns">
+									<a href={explorerLink(contractId)} target="_blank" rel="noopener noreferrer">
+										<button>Explorer</button>
+									</a>
+								</div>
+							</div>
 
-				<div className="spacer"></div>
-			</div>)
+							<div className="row sm">
+								<div className="six columns">
+									<Link to={`/contracts/${contractId}`}><button>Interact</button></Link>
+								</div>
+								<div className="six columns">
+									<button onClick={() => updateContract(update, contractId)}>Update</button>
+								</div>
+							</div>
+							<div className="row sm">
+								<div className="six columns">
+									<button className="button-warning" onClick={() => removeContract(wallet, update, contractId)}>Remove</button>
+								</div>
+							</div>
 
+							<div className="spacer"></div>
+						</div>)
+
+					}
+				</>
 		}
 
-		<h4>Manual Options</h4>
-		<button onClick={() => addContract(update)}>Add Contract</button>
+
+		<h4>Admin</h4>
+		<Link to={'/deploy'}><button>Deploy a New Contract</button></Link>
+		<button onClick={() => addContract(update)}>Add Existing Contract By Account ID</button>
 
 	</>
 

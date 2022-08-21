@@ -1,6 +1,6 @@
 import * as nearAPI from 'near-api-js';
-const { WalletAccount, KeyPair } = nearAPI
-import { parseNearAmount, formatNearAmount } from "near-api-js/lib/utils/format";
+const { KeyPair } = nearAPI
+import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { near, connection, networkId, keyStore, accountSuffix, contractId } from '../../utils/near-utils';
 export { accountSuffix, networkId, contractId, walletUrl } from '../../utils/near-utils';
 import getConfig from '../../utils/config';
@@ -17,7 +17,7 @@ const dropTypeMap = {
 }
 
 export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
-	
+
 	let updateAccount
 	if (hasUpdate) {
 		updateAccount = async () => {
@@ -49,6 +49,7 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
 				
 				const { seedPhrase } = getState().app.data
+
 				if (!seedPhrase) {
 					alert('Please go to Account and load your app data again.')
 					return update('app.loading', false)

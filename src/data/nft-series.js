@@ -31,7 +31,7 @@ export const nftSeries = {
 				media: 'metadata.media',
 				copies: 'metadata.copies',
 			},
-			number: ['id', 'copies'],
+			number: ['mint_id', 'copies'],
 			deposit: '0.1'
 		},
 		update_mint_id: {
