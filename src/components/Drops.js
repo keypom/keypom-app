@@ -8,7 +8,7 @@ import {
 import { contractId } from '../state/near'
 import { addKeys, claimDrop, genKeys } from '../state/drops'
 
-export const Drops = ({ state, update, contract, wallet }) => {
+export default Drops = ({ state, update, contract, wallet }) => {
 
 	const { seedPhrase } = state.app.data
 	const { drops } = contract

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Menu } from 'react-feather';
 
-export const Home = ({ state, update }) => {
+export default Home = ({ state, update }) => {
 	return <div>
 
 	<p>Welcome</p>

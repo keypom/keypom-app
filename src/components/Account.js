@@ -31,7 +31,7 @@ const ImportAppData = ({ update, wallet }) => <button onClick={() => {
 	fileBtn.click()
 }}>Import App Data</button>
 
-export const Account = ({ update, wallet, contract }) => {
+export default Account = ({ update, wallet, contract }) => {
 
 	const navigate = useNavigate()
 	if (!wallet.isSignedIn()) navigate('/')

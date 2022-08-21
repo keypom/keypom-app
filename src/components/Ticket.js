@@ -25,6 +25,18 @@ function openInNewTab(href) {
 	}).click();
 }
 
+function addScript(src) {
+	return new Promise((resolve, reject) => {
+	  const s = document.createElement('script');
+  
+	  s.setAttribute('src', src);
+	  s.addEventListener('load', resolve);
+	  s.addEventListener('error', reject);
+  
+	  document.body.appendChild(s);
+	});
+  }
+
 const poms = () => {
 	document.body.querySelector('.poms').style.display = 'block'
 	const w = Math.min(500, window.innerWidth)
@@ -96,7 +108,7 @@ const genQR = (qr) => {
  * 
  */
 
-export const Ticket = ({ dispatch, state, update, wallet }) => {
+export default Ticket = ({ dispatch, state, update, wallet }) => {
 
 	const qr = useRef();
 	const paramSecretKey = useParams().secretKey
@@ -177,10 +189,13 @@ export const Ticket = ({ dispatch, state, update, wallet }) => {
 
 			setKeyInfo(_keyInfo)
 			setDrop(_drop)
+
+			await addScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js')
+			
 			setTimeout(() => {
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
-			}, uses === 3 ? 1500 : 100)
+			}, uses === 3 ? 1500 : 500)
 
 		} catch (e) {
 			console.warn(e)

@@ -11,7 +11,7 @@ import {
 
 import './Claim.scss'
 
-export const Claim = ({ state, update, wallet }) => {
+export default Claim = ({ state, update, wallet }) => {
 	const { secretKey } = useParams()
 
 	const [keyPair, setKeyPair] = useState({})

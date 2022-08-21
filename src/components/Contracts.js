@@ -10,7 +10,7 @@ import { explorerLink, addContract, removeContract, updateContract } from "../st
 import { contractBySpec } from "../state/deploy"
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 
-export const Contracts = ({ state, update, wallet }) => {
+export default Contracts = ({ state, update, wallet }) => {
 
 	const [interact, setInteract] = useState()
 	const [data, setData] = useState([])

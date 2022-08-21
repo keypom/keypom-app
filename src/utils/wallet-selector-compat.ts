@@ -4,6 +4,8 @@ import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import * as nearAPI from "near-api-js";
 import BN from "bn.js";
+import NearIcon from '../img/my-near-wallet-icon.png'
+import SenderIcon from '../img/sender-icon.svg'
 
 import '../css/modal-ui.css'
 
@@ -59,8 +61,12 @@ export const getSelector = async ({
 		network,
 		debug: true,
 		modules: [
-			setupMyNearWallet(),
-			setupSender(),
+			setupMyNearWallet({
+				iconUrl: NearIcon,
+			}),
+			setupSender({
+				iconUrl: SenderIcon
+			}),
 		],
 	});
 

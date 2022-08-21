@@ -81,7 +81,7 @@ const ImportLinks = ({ links, update }) => <button onClick={() => {
 	fileBtn.click()
 }}>Import Keys</button>
 
-export const Distro = ({ update, dispatch }) => {
+export default Distro = ({ update, dispatch }) => {
 
 	const [links, setLinks] = useState(get(LINKS) || [])
 
