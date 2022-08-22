@@ -38,7 +38,7 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 					console.log(e)
 				}
 				if (drop.keySupply > 0) {
-					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id })
+					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: '0', limit: 10 })
 					drop.keys = keys.map(({ pk }) => pk)
 				} else {
 					drop.keys = []
@@ -148,11 +148,11 @@ export const view = (methodName, args) => {
 	return account.viewFunction(contractId, methodName, args)
 }
 
-export const call = (account, methodName, args) => {
+export const call = (account, methodName, args, _gas = gas) => {
 	return account.functionCall({
 		contractId,
 		methodName,
 		args,
-		gas,
+		gas: _gas,
 	})
 }

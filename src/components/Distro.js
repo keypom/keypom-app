@@ -79,7 +79,7 @@ const ImportLinks = ({ links, update }) => <button onClick={() => {
 		target.value = []
 	}
 	fileBtn.click()
-}}>Import Keys</button>
+}}>Import Tickets</button>
 
 const Distro = ({ update, dispatch }) => {
 
@@ -94,11 +94,9 @@ const Distro = ({ update, dispatch }) => {
 		onMount()
 	}, [])
 
-	console.log(links.length)
-
 	return <>
 		<ImportLinks {...{ links, update: setLinks }} />
-		<h4>Links</h4>
+		<h4>Tickets</h4>
 
 		<button className="fixed-bottom" onClick={() => window.scrollTo(0, 0)}>Top</button>
 

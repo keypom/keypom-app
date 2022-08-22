@@ -22,10 +22,10 @@ const params = ['receiver_id', 'method_name', 'args', 'attached_deposit', 'accou
 // }
 const functionCall = {
 	None: false,
-	receiver_id: 'pp-14.testnet',
+	receiver_id: 'nearcon-beta-keypom-nfts.near',
 	method_name: 'nft_mint',
 	args: '',
-	attached_deposit: '0.1',
+	attached_deposit: '0.015',
 	account_id_field: 'receiver_id',
 	drop_id_field: 'mint_id',
 }
@@ -189,7 +189,7 @@ const Create = ({ state, update, wallet }) => {
 							public_keys: keys.map(({ publicKey }) => publicKey.toString()),
 						}
 
-						const res2 =await call(wallet, 'add_keys', args)
+						const res2 =await call(wallet, 'add_keys', args, '300000000000000')
 						console.log(res2)
 
 					} catch (e) {

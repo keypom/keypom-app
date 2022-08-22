@@ -279,7 +279,11 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					</>
 				}
 				{
-					uses !== 1 && <div id="qr" ref={qr}></div>
+					uses !== 1 && <div>
+						<p>This is your Ticket! Keep it Safe!</p>
+						<div id="qr" ref={qr}></div>
+						<p className="small">(Will you be online? Screenshot This Now!)</p>
+					</div>
 				}
 			</>}
 

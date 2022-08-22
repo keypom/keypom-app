@@ -26,7 +26,7 @@ main.ticket {
 			0 0 32px 0 #ff00ff44;
 	}
 
-	>#qr {
+	#qr {
 		margin: auto;
 		max-width: 500px;
 		padding: 16px;
@@ -48,6 +48,11 @@ main.ticket {
 			transform: scale(0, 0);
 		}
 	}
+
+	.small {
+		font-size: 1.2rem;
+	}
+
 	.footer {
 		color: white !important;
 	}
