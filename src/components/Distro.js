@@ -84,6 +84,7 @@ const ImportLinks = ({ links, update }) => <button onClick={() => {
 const Distro = ({ update, dispatch }) => {
 
 	const [links, setLinks] = useState(get(LINKS) || [])
+	const [tight, setTight] = useState(false)
 
 	const onMount = async () => {
 		checkLinks(setLinks, links)
@@ -94,8 +95,9 @@ const Distro = ({ update, dispatch }) => {
 		onMount()
 	}, [])
 
-	return <>
+	return <div className={tight ? "tight" : ""}>
 		<ImportLinks {...{ links, update: setLinks }} />
+		<button onClick={() => setTight(!tight)} style={{backgroundColor: tight? '#00ff0044' : 'white'}}>{!tight ? 'Tight View' : 'Larger View'}</button>
 		<h4>Tickets</h4>
 
 		<button className="fixed-bottom" onClick={() => window.scrollTo(0, 0)}>Top</button>
@@ -116,14 +118,16 @@ const Distro = ({ update, dispatch }) => {
 					</div>
 					{uses > 1 && <div className="row sm">
 						<div className="six columns">
-							<button onClick={() => {
-								if (!window.confirm(`Manually mark ticket as ${shared ? 'not shared? It looks like you shared this ticket!' : 'shared?'} Only visible to you.`)) {
-									return
-								}
-								links[i].shared = !shared
-								setLinks([...links])
-								set(LINKS, links)
-							}}>{shared ? 'Not Shared' : 'Mark Shared'}</button>
+							{
+								uses > 2 && <button onClick={() => {
+									if (!window.confirm(`Manually mark ticket as ${shared ? 'not shared? It looks like you shared this ticket!' : 'shared?'} Only visible to you.`)) {
+										return
+									}
+									links[i].shared = !shared
+									setLinks([...links])
+									set(LINKS, links)
+								}}>{shared ? 'Not Shared' : 'Mark Shared'}</button>
+							}
 						</div>
 						<div className="six columns">
 							<button onClick={() => {
@@ -149,7 +153,7 @@ const Distro = ({ update, dispatch }) => {
 			})
 		}
 
-	</>
+	</div>
 
 }
 

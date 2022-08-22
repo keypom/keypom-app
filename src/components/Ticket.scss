@@ -26,6 +26,10 @@ main.ticket {
 			0 0 32px 0 #ff00ff44;
 	}
 
+	#qr-container {
+		display: none;
+	}
+
 	#qr {
 		margin: auto;
 		max-width: 500px;

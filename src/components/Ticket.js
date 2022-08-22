@@ -193,6 +193,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			await addScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js')
 			
 			setTimeout(() => {
+				document.querySelector('#qr-container').style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
 			}, uses === 3 ? 1500 : 500)
@@ -279,7 +280,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					</>
 				}
 				{
-					uses !== 1 && <div>
+					uses !== 1 && <div id="qr-container">
 						<p>This is your Ticket! Keep it Safe!</p>
 						<div id="qr" ref={qr}></div>
 						<p className="small">(Will you be online? Screenshot This Now!)</p>
