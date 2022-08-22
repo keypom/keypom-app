@@ -158,14 +158,19 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			const uses = _keyInfo.key_info.remaining_uses
 			if (uses === 3) {
 				try {
-					const account = await getClaimAccount(_keyPair.secretKey)
-					const res = await call(account, 'claim', { account_id: `testnet` })
 
-					if (res?.status?.SuccessValue !== '') {
-						window.location.reload()
-						window.location.href = window.location.href
-						return
-					}
+					setTimeout(async () => {
+						const keyInfoAgain = await view('get_key_information', { key: _keyPair.publicKey.toString() })
+						if (keyInfoAgain.key_info.remaining_uses === 3) {
+							const account = await getClaimAccount(_keyPair.secretKey)
+							const res = await call(account, 'claim', { account_id: `testnet` })
+							if (res?.status?.SuccessValue !== '') {
+								window.location.reload()
+								window.location.href = window.location.href
+								return
+							}
+						}
+					}, 3000)
 
 					poms()
 
@@ -193,7 +198,8 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			await addScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js')
 			
 			setTimeout(() => {
-				document.querySelector('#qr-container').style.display = 'block';
+				const container = document.querySelector('#qr-container')
+				if (container) container.style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
 			}, uses === 3 ? 1500 : 500)
