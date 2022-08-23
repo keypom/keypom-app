@@ -16,7 +16,7 @@ import './Ticket.scss'
 
 const DROP_AND_SECRET_KEY = '__DROP_AND_SECRET_KEY'
 const CLAIMED = '__CLAIMED'
-const FIRST_CLAIM_TIMEOUT = 1500
+const FIRST_CLAIM_TIMEOUT = 3000
 let claimTimeout = null
 let claimFn = null
 
