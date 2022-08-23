@@ -16,6 +16,9 @@ import './Ticket.scss'
 
 const DROP_AND_SECRET_KEY = '__DROP_AND_SECRET_KEY'
 const CLAIMED = '__CLAIMED'
+const FIRST_CLAIM_TIMEOUT = 1500
+let claimTimeout = null
+let claimFn = null
 
 function openInNewTab(href) {
 	Object.assign(document.createElement('a'), {
@@ -119,6 +122,11 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 	const [claimed, setClaimed] = useState(!!get(CLAIMED))
 
 	const onMount = async () => {
+		window.addEventListener('blur', () => clearInterval(claimTimeout));
+		window.addEventListener('focus', () => {
+			if (claimFn) claimTimeout = setTimeout(claimFn, FIRST_CLAIM_TIMEOUT)
+		});
+
 		setTimeout(() => document.body.classList.add('dark'), 10)
 
 		update('app.loading', true)
@@ -145,9 +153,9 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			}
 
 			const _keyPair = KeyPair.fromString(secretKey)
+			setKeyPair(_keyPair)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 
-			setKeyPair(_keyPair)
 			// console.log(_drop)
 
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
@@ -159,7 +167,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			if (uses === 3) {
 				try {
 
-					setTimeout(async () => {
+					claimFn = async () => {
 						const keyInfoAgain = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 						if (keyInfoAgain.key_info.remaining_uses === 3) {
 							const account = await getClaimAccount(_keyPair.secretKey)
@@ -170,7 +178,8 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 								return
 							}
 						}
-					}, 3000)
+					}
+					claimTimeout = setTimeout(claimFn, FIRST_CLAIM_TIMEOUT)
 
 					poms()
 
@@ -202,7 +211,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				if (container) container.style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
-			}, uses === 3 ? 1500 : 500)
+			}, uses === 3 ? FIRST_CLAIM_TIMEOUT : 500)
 
 		} catch (e) {
 			console.warn(e)
