@@ -16,7 +16,7 @@ import './Ticket.scss'
 
 const DROP_AND_SECRET_KEY = '__DROP_AND_SECRET_KEY'
 const CLAIMED = '__CLAIMED'
-const FIRST_CLAIM_TIMEOUT = 3000
+const FIRST_CLAIM_TIMEOUT = 2000
 let claimTimeout = null
 let claimFn = null
 
@@ -155,14 +155,9 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			const _keyPair = KeyPair.fromString(secretKey)
 			setKeyPair(_keyPair)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
-
 			// console.log(_drop)
-
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_keyInfo)
-
-			// const { FC } = _drop.drop_type
-			// setIsTicket(FC?.method_data?.length === 2 && FC?.method_data[0] === null)
 			const uses = _keyInfo.key_info.remaining_uses
 			if (uses === 3) {
 				try {
@@ -170,9 +165,15 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					claimFn = async () => {
 						const keyInfoAgain = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 						if (keyInfoAgain.key_info.remaining_uses === 3) {
-							const account = await getClaimAccount(_keyPair.secretKey)
-							const res = await call(account, 'claim', { account_id: `testnet` })
-							if (res?.status?.SuccessValue !== '') {
+							try {
+								const account = await getClaimAccount(_keyPair.secretKey)
+								const res = await call(account, 'claim', { account_id: `testnet`, expected_uses: 3 })
+								if (res?.status?.SuccessValue !== '') {
+									window.location.reload()
+									window.location.href = window.location.href
+									return
+								}
+							} catch (e) {
 								window.location.reload()
 								window.location.href = window.location.href
 								return
@@ -211,7 +212,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				if (container) container.style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
-			}, uses === 3 ? FIRST_CLAIM_TIMEOUT : 500)
+			}, uses === 3 ? FIRST_CLAIM_TIMEOUT : 250)
 
 		} catch (e) {
 			console.warn(e)
