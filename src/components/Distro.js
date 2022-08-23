@@ -68,10 +68,16 @@ const ImportLinks = ({ links, update }) => <button onClick={() => {
 	fileBtn.onchange = ({ target }) => {
 		const reader = new FileReader()
 		reader.onload = ({ target: { result } }) => {
-			result = result.split('\r\n').map((link) => ({
+			result = result
+			.replaceAll('\r', '')
+			.replace(/,|'|"|;/gi, '')
+			.split('\n')
+			.filter((link) => link.length > 2)
+			.map((link) => ({
 				uses: 3,
 				link
 			}))
+			console.log(result)
 			// TODO recursive loop to check uses
 			checkLinks(update, result)
 		}
