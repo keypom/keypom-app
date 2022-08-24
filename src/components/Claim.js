@@ -65,7 +65,7 @@ const Claim = ({ state, update, wallet }) => {
 	{ 
 		metadata && <img src={metadata.media} />
 	}
-	<button onClick={async () => {
+	<button className="outline" onClick={async () => {
 		const account = await getClaimAccount(keyPair.secretKey)
 		
 		const res = await call(account, 'claim', { account_id: `md1.testnet` })

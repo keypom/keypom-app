@@ -24,10 +24,12 @@ const Links = ({ update, wallet }) => {
 
 const Header = ({ pathname, menu, wallet, update }) => {
 
+	const len = pathname.split('/').length
+
 	return <header>
 		<div>
 			<p>
-				Drop Zone
+				Keypom { len > 1 ? '-' : ''}
 				{
 					pathname.split('/').map((str, i) => <span key={str + i}>
 						{

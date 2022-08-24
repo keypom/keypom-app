@@ -29,8 +29,8 @@ const Ticket = React.lazy(() => import('./components/Ticket'));
 const Scanner = React.lazy(() => import('./components/Scanner'));
 const Distro = React.lazy(() => import('./components/Distro'));
 
-import './css/normalize.css';
-import './css/skeleton.css';
+// import './css/normalize.css';
+// import './css/skeleton.css';
 import './css/modal-ui.css';
 import './App.scss';
 
@@ -144,7 +144,7 @@ const App = () => {
 							<Route path="/" element={
 								<>
 									<p>Please sign in to get started</p>
-									<button onClick={() => wallet.signIn()}>Sign In</button>
+									<button className="outline" onClick={() => wallet.signIn()}>Sign In</button>
 								</>
 							} />
 						</Routes>

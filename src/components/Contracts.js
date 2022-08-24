@@ -123,28 +123,23 @@ const Contracts = ({ state, update, wallet }) => {
 
 					{
 						contracts.map((contractId) => <div key={contractId}>
-							<div className="row sm">
-								<div className="six columns">
+							<div className="grid sm">
+								<div>
 									<p>{contractId}</p>
 								</div>
-								<div className="six columns">
+								<div>
 									<a href={explorerLink(contractId)} target="_blank" rel="noopener noreferrer">
-										<button>Explorer</button>
+										<button className="outline">Explorer</button>
 									</a>
 								</div>
-							</div>
-
-							<div className="row sm">
-								<div className="six columns">
-									<Link to={`/contracts/${contractId}`}><button>Interact</button></Link>
+								<div>
+									<Link to={`/contracts/${contractId}`}><button className="outline">Interact</button></Link>
 								</div>
-								<div className="six columns">
-									<button onClick={() => updateContract(update, contractId)}>Update</button>
+								<div>
+									<button className="outline" onClick={() => updateContract(update, contractId)}>Update</button>
 								</div>
-							</div>
-							<div className="row sm">
-								<div className="six columns">
-									<button className="button-warning" onClick={() => removeContract(wallet, update, contractId)}>Remove</button>
+								<div>
+									<button className="outline button-warning" onClick={() => removeContract(wallet, update, contractId)}>Remove</button>
 								</div>
 							</div>
 
@@ -157,8 +152,8 @@ const Contracts = ({ state, update, wallet }) => {
 
 
 		<h4>Admin</h4>
-		<Link to={'/deploy'}><button>Deploy a New Contract</button></Link>
-		<button onClick={() => addContract(update)}>Add Existing Contract By Account ID</button>
+		<Link to={'/deploy'}><button className="outline">Deploy a New Contract</button></Link>
+		<button className="outline" onClick={() => addContract(update)}>Add Existing Contract By Account ID</button>
 
 	</>
 

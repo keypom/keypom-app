@@ -21,7 +21,7 @@ const genFields = (data, values, onChange) => {
 			input.checked = values[k]
 		}
 		
-		return <div className="six columns" key={k}>
+		return <div key={k}>
 			<label htmlFor={k}>{k}</label>
 			{
 				v.toString().length > 64 ? 
@@ -46,6 +46,6 @@ export const Form = ({ data, onChange, submit, submitLabel }) => {
 		<div className="row">
 			{genFields(data, values, onValueChange)}
 		</div>
-		{ submit && <button className="button-primary" onClick={() => submit(values)}>{ submitLabel ? submitLabel : 'Submit' }</button> }
+		{ submit && <button className="outline button-primary" onClick={() => submit(values)}>{ submitLabel ? submitLabel : 'Submit' }</button> }
 	</>
 }

@@ -123,7 +123,7 @@ const App = () => {
 		<div className="root">
 			<HelloMessage message={state.foo && state.foo.bar.hello} />
 			<p>clicked: {JSON.stringify(state.clicked)}</p>
-			<button onClick={handleClick}>Click Me</button>
+			<button className="outline" onClick={handleClick}>Click Me</button>
 		</div>
 	);
 };

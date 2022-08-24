@@ -18,12 +18,22 @@ h1, h2, h3, h4 {
     margin: 0 0 16px 0 !important;
 }
 
+a, a:hover, a:visited, a:focus {
+    text-decoration: none;
+}
+
 p {
     word-break: break-all;
 }
 
 hr {
-    margin: 16px 0;
+    margin: 8px 0;
+}
+
+button {
+    border-radius: 0;
+    height: 44px;
+    padding: 4px 8px;
 }
 
 main {
@@ -68,42 +78,24 @@ main {
 }
 
 .button-warning, .button-warning:hover {
-    background-color: #ec2046;
     border-color: #ec2046;
-    color: white;
+    border-width: 2px;
+    color: #bb2836;
     &:hover {
-        background-color: #bb2836;
+        border-color: #bb2836;
     }
-}
-
-button {
-    margin-right: 16px !important;
 }
 
 .spacer {
     margin-bottom: 16px;
 }
 
-.row {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.row.sm {
-    margin: 0 0 8px 0;
-    align-items: center;
-    .six.columns {
-        width: 50%;
-        &:nth-child(odd) {
-            padding-right: 4px;
-        }
-        &:nth-child(even) {
-            padding-left: 4px;
-        }
-    }
+.grid.sm {
+    row-gap: 8px;
+    grid-template-columns: 50% 50%;
+    margin-right: 16px;
     p, button {
-        width: 100% !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 0;
     }
 }
 
@@ -115,12 +107,6 @@ button {
 @media only screen and (min-device-width: 550px) {
     .columns:nth-child(odd) {
         margin-left: 0;
-    }
-    .row.sm {
-        .six.columns {
-            width: 48%;
-            padding: 0 !important;
-        }
     }
     main {
         margin-left: 256px;

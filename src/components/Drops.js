@@ -51,9 +51,9 @@ const Drops = ({ state, update, contract, wallet }) => {
 
 		return <>
 			<h4>Drop ID: {drop.drop_id}</h4>
-			<div className="row sm">
-				<div className="six columns">
-					<button onClick={async () => {
+			<div className="grid sm">
+				<div>
+					<button className="outline" onClick={async () => {
 						update('app.loading', true)
 						const num = window.prompt(`How many keys would you like to add to the drop?`)
 						const parsedNum = parseInt(num)
@@ -67,15 +67,15 @@ const Drops = ({ state, update, contract, wallet }) => {
 						update('app.loading', false)
 					}}>Add Keys</button>
 				</div>
-				<div className="six columns">
-					<button onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
+				<div>
+					<button className="outline" onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
 				</div>
 			</div>
 			{
 				drop.keyPairs && <>
 
 					<h4>Keys {drop.keySupply}</h4>
-					<button onClick={async () => {
+					<button className="outline" onClick={async () => {
 						update('app.loading', true)
 						const keys = await genKeys(seedPhrase, drop.next_key_id, drop.drop_id)
 						update('app.loading', false)
@@ -84,17 +84,15 @@ const Drops = ({ state, update, contract, wallet }) => {
 					}}>Download All Ticket Links</button>
 					{
 						drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
-							<div className="row sm">
+							<div className="grid sm">
 								<div className="twelve columns">
 									<p>{secretKey.substring(0, 32)}</p>
 								</div>
-							</div>
-							<div className="row sm">
-								<div className="six columns">
+								<div>
 									<Link to={`/ticket/${secretKey}`}><button>Preview Drop</button></Link>
 								</div>
-								<div className="six columns">
-									<button onClick={async () => {
+								<div>
+									<button className="outline" onClick={async () => {
 										update('app.loading', true)
 										await claimDrop(wallet.accountId, secretKey)
 										await wallet.update()
@@ -115,28 +113,26 @@ const Drops = ({ state, update, contract, wallet }) => {
 
 		{
 			drops.map(({ drop_id, balance, drop_type_label }) => <div key={drop_id}>
-				<div className="row sm">
-					<div className="six columns">
+				<div className="grid sm">
+					<div>
 						<p>Drop ID: {drop_id}</p>
 					</div>
-					<div className="six columns">
+					<div>
 						<p>{drop_type_label}</p>
 					</div>
-				</div>
-				<div className="row sm">
-					<div className="six columns">
+					<div>
 						<Link to={`/drops/${drop_id}`}>
-							<button>Details</button>
+							<button className="outline">Details</button>
 						</Link>
 					</div>
-					<div className="six columns">
-						<button onClick={() => handleRemoveDrop(drop_id)}>Remove Drop</button>
+					<div>
+						<button className="outline" onClick={() => handleRemoveDrop(drop_id)}>Remove Drop</button>
 					</div>
 				</div>
 			</div>)
 		}
 		<br/>
-		<Link to={'/create'}><button>Create a Drop</button></Link>
+		<Link to={'/create'}><button className="outline">Create a Drop</button></Link>
 	</>
 
 }

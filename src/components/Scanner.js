@@ -70,13 +70,13 @@ const Scanner = ({ state, update, wallet }) => {
 				typeof valid === 'string' && <p className="info">{ valid }</p>
 			}
 		</div>
-		<button onClick={() => {
+		<button className="outline" onClick={() => {
 			setValid(null)
 		}}>Next Ticket</button>
 		<br />
 		<br />
 		<p>If the scanner is frozen or stops working:</p>
-		<button onClick={() => {
+		<button className="outline" onClick={() => {
 			window.location.reload()
 			window.location.href = window.location.href
 		}}>Reload Scanner</button>

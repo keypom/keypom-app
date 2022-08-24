@@ -248,7 +248,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 
 		{claimed ? <>
 			<h4>NFT Claimed</h4>
-			<button onClick={() => {
+			<button className="outline" onClick={() => {
 				openInNewTab(`https://${networkId === 'mainnet' ? 'app' : 'testnet'}.mynearwallet.com/?tab=collectibles`)
 			}}>Go to MyNearWallet</button>
 		</>
@@ -264,7 +264,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					uses === 1 && <>
 						{
 							wallet.isSignedIn() ?
-								<button onClick={async () => {
+								<button className="outline" onClick={async () => {
 									update('app.loading', true)
 									try {
 										const account = await getClaimAccount(keyPair.secretKey)
@@ -287,10 +287,10 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 								}}>Claim NFT</button>
 								:
 								<>
-									<button onClick={() => {
+									<button className="outline" onClick={() => {
 										window.open(walletUrl + '/linkdrop/' + contractId + '/' + keyPair.secretKey)
 									}}>Claim NFT on MyNearWallet</button>
-									<button onClick={() => wallet.signIn()}>Sign In With Another Wallet</button>
+									<button className="outline" onClick={() => wallet.signIn()}>Sign In With Another Wallet</button>
 								</>
 						}
 					</>

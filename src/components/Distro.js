@@ -59,7 +59,7 @@ const checkLinks = async (update, links, cur = 0) => {
 	}
 }
 
-const ImportLinks = ({ links, update }) => <button onClick={() => {
+const ImportLinks = ({ links, update }) => <button className="outline" onClick={() => {
 	if (links.length) {
 		const confirm = window.confirm(`Do you want to remove all current tickets and replace them with the ones in the file?!`)
 		if (!confirm) return
@@ -103,7 +103,7 @@ const Distro = ({ update, dispatch }) => {
 
 	return <div className={tight ? "tight" : ""}>
 		<ImportLinks {...{ links, update: setLinks }} />
-		<button onClick={() => setTight(!tight)} style={{backgroundColor: tight? '#00ff0044' : 'white'}}>{!tight ? 'Tight View' : 'Larger View'}</button>
+		<button className="outline" onClick={() => setTight(!tight)} style={{backgroundColor: tight? '#00ff0044' : 'white'}}>{!tight ? 'Tight View' : 'Larger View'}</button>
 		<h4>Tickets</h4>
 
 		<button className="fixed-bottom" onClick={() => window.scrollTo(0, 0)}>Top</button>
@@ -113,19 +113,18 @@ const Distro = ({ update, dispatch }) => {
 				const status = statusLabel[3 - uses]
 
 				return <div key={link}>
-					<div className="row sm">
-						<div className="six columns">
+					<div className="grid sm">
+						<div>
 							<p>{i + 1}. {link.split('/ticket/')[1].substring(0, 8)}</p>
 						</div>
-						<div className="six columns flex">
+						<div className={uses < 3 ? 'width-100' : 'flex'}>
 							{uses === 3 && <p className={shared ? 'clicked' : 'available'}>{shared ? 'shared' : 'not shared'}</p>}
 							<p className={status}>{status}</p>
 						</div>
-					</div>
-					{uses > 1 && <div className="row sm">
-						<div className="six columns">
+						{uses > 1 && <>
+						<div>
 							{
-								uses > 2 && <button onClick={() => {
+								uses > 2 && <button className="outline" onClick={() => {
 									if (!window.confirm(`Manually mark ticket as ${shared ? 'not shared? It looks like you shared this ticket!' : 'shared?'} Only visible to you.`)) {
 										return
 									}
@@ -135,8 +134,8 @@ const Distro = ({ update, dispatch }) => {
 								}}>{shared ? 'Not Shared' : 'Mark Shared'}</button>
 							}
 						</div>
-						<div className="six columns">
-							<button onClick={() => {
+						<div>
+							<button className="outline" onClick={() => {
 								if (shared && !window.confirm('It looks like you shared this ticket! Share this ticket again?')) {
 									return
 								}
@@ -152,8 +151,10 @@ const Distro = ({ update, dispatch }) => {
 								if (!mobile) dispatch(popMessage('Ticket Link Copied'))
 							}}>Share</button>
 						</div>
-					</div>
+					</>
 					}
+					</div>
+					
 					<hr />
 				</div>
 			})

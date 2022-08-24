@@ -7,7 +7,7 @@ import {
 	useNavigate
 } from "react-router-dom";
 
-const ImportAppData = ({ update, wallet }) => <button onClick={() => {
+const ImportAppData = ({ update, wallet }) => <button className="outline" onClick={() => {
 	const confirm = window.confirm(`Do you want to remove all current app data and replace it? Make sure you export app data first!`)
 	if (!confirm) return
 	const fileBtn = document.querySelector('#file-btn')
@@ -67,31 +67,31 @@ const Account = ({ update, wallet, contract }) => {
 
 	return <>
 		<h4>{wallet.accountId}</h4>
-		<button onClick={() => {
+		<button className="outline" onClick={() => {
 			wallet.signOut()
 			navigate('/')
 		}}>Sign Out</button>
 
 		<h4>Balance {balanceFormatted}</h4>
-		<button onClick={handleAddDeposit}>Add Deposit</button>
-		<button onClick={handleWithdraw}>Withdraw All</button>
+		<button className="outline" onClick={handleAddDeposit}>Add Deposit</button>
+		<button className="outline" onClick={handleWithdraw}>Withdraw All</button>
 
 		<h4>Key Management</h4>
 		{
 			appData?.seedPhrase ?
 				<div>
-					<button onClick={() => {
+					<button className="outline" onClick={() => {
 						file('ProxyAppData.json', JSON.stringify(appData))
 					}}>Export App Data</button>
 					<ImportAppData {...{ update, wallet }} />
-					<button onClick={() => {
+					<button className="outline" onClick={() => {
 						setAppData(update, null)
 					}}>Clear App Data</button>
 				</div>
 				:
 				<div>
 					<ImportAppData {...{ update, wallet }} />
-					<button onClick={() => {
+					<button className="outline" onClick={() => {
 						alert(`You're going to create a main key for using this app. You should keep it somewhere safe. DO NOT SHARE IT!`)
 						const trySeedPhrase = () => {
 							const { seedPhrase } = generateSeedPhrase()

@@ -70,8 +70,8 @@ const Deploy = ({ state, update, wallet }) => {
 			break;
 		default:
 			return <div>
-				<Link to="/deploy/nft-simple"><button>Deploy NFT Simple</button></Link>
-				<Link to="/deploy/nft-series"><button>Deploy NFT Series</button></Link>
+				<Link to="/deploy/nft-simple"><button className="outline">Deploy NFT Simple</button></Link>
+				<Link to="/deploy/nft-series"><button className="outline">Deploy NFT Series</button></Link>
 			</div>
 	}
 }

@@ -129,14 +129,14 @@ const Create = ({ state, update, wallet }) => {
 							}} />
 
 							{
-								i > 0 && <button onClick={() => {
+								i > 0 && <button className="outline" onClick={() => {
 									const newData = [...customData]
 									newData.splice(i, 1)
 									setCustomData(newData)
 								}}>Remove Call 👆</button>
 							}
 
-							<button onClick={() => {
+							<button className="outline" onClick={() => {
 								const newData = [...customData]
 								newData.splice(i + 1, 0, {...functionCall})
 								setCustomData(newData)
