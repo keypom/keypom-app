@@ -32,6 +32,14 @@ main.ticket {
 
 	#qr-container {
 		display: none;
+
+		>p {
+			color: white;
+
+			&.small {
+				font-size: 0.9rem;
+			}
+		}
 	}
 
 	#qr {
@@ -55,10 +63,6 @@ main.ticket {
 			opacity: 0;
 			transform: scale(0, 0);
 		}
-	}
-
-	.small {
-		font-size: 1.2rem;
 	}
 
 	.footer > p {
