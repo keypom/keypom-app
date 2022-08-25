@@ -42,7 +42,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 
 	if (!drops?.length) return <>
 		<p>No drops</p>
-		<Link to={'/create'}><button>Create a Drop</button></Link>
+		<Link to={'/create'}><button className="outline">Create a Drop</button></Link>
 	</>
 
 	if (which) {

@@ -64,7 +64,6 @@ const App = () => {
 	const [search] = useSearchParams();
 
 	const onMount = async () => {
-		document.body.classList.remove('dark')
 		if (/claim|ticket|scanner|distro/.test(pathname)) return
 		await dispatch(onAppMount());
 		await dispatch(initNear());

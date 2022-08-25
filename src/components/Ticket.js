@@ -127,8 +127,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			if (claimFn) claimTimeout = setTimeout(claimFn, FIRST_CLAIM_TIMEOUT)
 		});
 
-		setTimeout(() => document.body.classList.add('dark'), 10)
-
 		update('app.loading', true)
 		try {
 			let { id, secretKey } = get(DROP_AND_SECRET_KEY) || {}

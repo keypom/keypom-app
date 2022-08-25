@@ -1,7 +1,9 @@
 main.ticket {
-	margin: -16px 0 64px 0;
+	margin: -16px 0 0 0;
+	padding-bottom: 64px;
 	text-align: center;
 	color: white;
+	background: black;
 
 	>h4 {
 		margin-top: 100px !important;
@@ -13,6 +15,8 @@ main.ticket {
 		color: white;
 		border-color: white;
 		margin: 0 auto 32px auto !important;
+		max-width: 500px;
+		border-radius: 6px;
 	}
 
 	>img {
@@ -57,7 +61,7 @@ main.ticket {
 		font-size: 1.2rem;
 	}
 
-	.footer {
+	.footer > p {
 		color: white !important;
 	}
 }
