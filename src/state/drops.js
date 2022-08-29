@@ -9,7 +9,7 @@ export const addKeys = async (seedPhrase, account, drop, num) => {
 	const { drop_id } = drop
 
 	const keys = await genKeys(seedPhrase, num, drop_id, drop.next_key_id)
-	args = {
+	const args = {
 		drop_id,
 		public_keys: keys.map(({ publicKey }) => publicKey.toString()),
 	}
