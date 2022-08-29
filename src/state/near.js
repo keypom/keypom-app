@@ -28,34 +28,40 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 			const balance = await view('get_user_balance', { account_id: account.accountId })
 	
 			const drops = await view('get_drops_for_owner', { account_id: account.accountId })
-			
-			for (const drop of drops) {
+
+			/// TODO this has been updated with the drop nonce
+			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
+			// should work even when you paginate, drop.keyPairs stays synced with drop.keys
+			const { seedPhrase } = getState().app.data
+
+			if (!seedPhrase) {
+				alert('Please go to Account and load your app data again.')
+				return update('app.loading', false)
+			}
+
+			/// going to mutate the drop directly, wait for all updates then execute after
+			await Promise.all(drops.map(async (drop) => {
 				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
 				
-				try {
-					drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
-				} catch (e) {
-					console.log(e)
-				}
+				// don't wait on this
+				(async() => {
+					try {
+						drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
+					} catch (e) {
+						drop.keySupply = 0
+						console.log(e)
+					}
+				})()
+
+				// wait on keys, then create keypairs for samples
 				if (drop.keySupply > 0) {
-					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: '0', limit: 10 })
+					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: '0', limit: 5 })
 					drop.keys = keys.map(({ pk }) => pk)
 				} else {
 					drop.keys = []
 				}
-				/// TODO this has been updated with the drop nonce
-	
-				// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
-				// should work even when you paginate, drop.keyPairs stays synced with drop.keys
-				
-				const { seedPhrase } = getState().app.data
-
-				if (!seedPhrase) {
-					alert('Please go to Account and load your app data again.')
-					return update('app.loading', false)
-				}
 				drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
-			}
+			}))
 			
 			const contract = {
 				drops,
@@ -75,6 +81,9 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 		networkId,
 		contractId,
 		onAccountChange: async (accountId) => {
+			if (!accountId) {
+				return update('app.loading', false)
+			}
 			console.log('Current Account:', accountId)
 			if (hasUpdate) {
 				updateAccount()

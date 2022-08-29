@@ -86,13 +86,14 @@ export const getSelector = async ({
 		wallet = await selector.wallet()
 		defaultAccountId = (await wallet?.getAccounts())?.[0]?.accountId;
 	} catch(e) {
-		console.warn(e)
 		if (!/No wallet/.test(e)) throw e
+		console.warn(e)
+		onAccountChange(null)
 	}
 	if (defaultAccountId) {
 		accountId = defaultAccountId;
 	}
-	await onAccountChange(accountId);
+	// await onAccountChange(accountId);
 
 	selector.signIn = () => {
 		modal.show()
