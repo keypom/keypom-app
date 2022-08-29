@@ -29,7 +29,7 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 	
 			const drops = await view('get_drops_for_owner', { account_id: account.accountId })
 			
-			for (drop of drops) {
+			for (const drop of drops) {
 				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
 				
 				try {
