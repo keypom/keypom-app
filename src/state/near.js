@@ -43,24 +43,27 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 			await Promise.all(drops.map(async (drop) => {
 				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
 				
-				// don't wait on this
-				(async() => {
-					try {
-						drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
-					} catch (e) {
-						drop.keySupply = 0
-						console.log(e)
-					}
-				})()
-
-				// wait on keys, then create keypairs for samples
-				if (drop.keySupply > 0) {
-					const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: '0', limit: 5 })
-					drop.keys = keys.map(({ pk }) => pk)
-				} else {
-					drop.keys = []
-				}
-				drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
+				await Promise.all([
+					(async() => {
+						try {
+							drop.keySupply = await view('get_key_supply_for_drop', { drop_id: drop.drop_id })
+						} catch (e) {
+							drop.keySupply = 0
+							console.log(e)
+						}
+					})(),
+					(async() => {
+						/// TODO fix this so it's checking the keys are valid before showing them to user
+						if (drop.next_key_id === 0) {
+							drop.keys = []
+							drop.keyPairs = []
+							return
+						}
+						const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: (drop.next_key_id - 5).toString(), limit: Math.min(5, drop.next_key_id) })
+						drop.keys = keys.map(({ pk }) => pk)
+						drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
+					})()
+				])
 			}))
 			
 			const contract = {
@@ -68,8 +71,6 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 				balance,
 				balanceFormatted: formatNearAmount(balance, 4)
 			}
-
-			console.log(drops)
 	
 			update('', { contract })
 			update('wallet.accountId', account.accountId)
