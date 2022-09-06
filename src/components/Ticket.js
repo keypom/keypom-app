@@ -129,30 +129,28 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 
 		update('app.loading', true)
 		try {
-			let { id, secretKey } = get(DROP_AND_SECRET_KEY) || {}
-			const hasSecretKey = !!secretKey
-			if (!hasSecretKey) {
-				secretKey = paramSecretKey
-				// don't visit another secret key if we've already activated one
-			} else if (window.location.href.indexOf(secretKey) === -1) {
-				const _keyPair = KeyPair.fromString(paramSecretKey)
-				const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
+			const localDrops = get(DROP_AND_SECRET_KEY) || {}
+			console.log(localDrops)
 
-				let { drop_id } = _drop
-				// use metadata.id if it exists (catch all for multiple drops per event)
-				try {
-					const metadata = JSON.parse(_drop.metadata)
-					if (metadata.id) drop_id = metadata.id
-				} catch (e) { }
-				if (drop_id === id) {
-					window.location.href = window.location.origin + '/ticket/' + secretKey
-					return null
-				}
+			const _keyPair = KeyPair.fromString(paramSecretKey)
+			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
+
+			// use metadata.id if it exists (catch all for multiple drops per event)
+			let { drop_id } = _drop
+			try {
+				const metadata = JSON.parse(_drop.metadata)
+				if (metadata.id) drop_id = metadata.id
+			} catch (e) { }
+			
+			// redirect to existing ticket matching same id
+			if (localDrops[drop_id] && window.location.href.indexOf(localDrops[drop_id]) === -1) {
+				window.location.href = window.location.origin + '/ticket/' + localDrops[drop_id]
+				return null
 			}
 
-			const _keyPair = KeyPair.fromString(secretKey)
+			set(DROP_AND_SECRET_KEY, { ...get(DROP_AND_SECRET_KEY), [drop_id]: paramSecretKey })
+
 			setKeyPair(_keyPair)
-			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_drop)
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			// console.log(_keyInfo)
@@ -190,10 +188,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 						if (metadata.id) id = metadata.id
 					} catch (e) { }
 
-					set(DROP_AND_SECRET_KEY, {
-						id,
-						secretKey,
-					})
+					set(DROP_AND_SECRET_KEY, { ...get(DROP_AND_SECRET_KEY), id: paramSecretKey })
 				} catch (e) {
 					window.location.reload()
 					window.location.href = window.location.href
