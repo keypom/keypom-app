@@ -329,7 +329,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				});
 			}} src={Keypom} />
 			<p>
-				😍 Keypom Launch Talk at <a href="https://nearcon.org" target="_blank">NEARCON</a> 👀
+				😍 Keypom Launch Talk at <a href="https://proofofsound.splashthat.com/" target="_blank">NEARCON Proof of Sound Stage, Sep 12, 12:50pm - 1:10pm</a> 👀
 			</p>
 		</div>
 	</>
