@@ -117,6 +117,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 	const paramSecretKey = useParams().secretKey
 
 	const [keyPair, setKeyPair] = useState({})
+	const [banner, setBanner] = useState(null)
 	const [keyInfo, setKeyInfo] = useState({})
 	const [drop, setDrop] = useState({})
 	const [claimed, setClaimed] = useState(!!get(CLAIMED))
@@ -130,7 +131,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 		update('app.loading', true)
 		try {
 			const localDrops = get(DROP_AND_SECRET_KEY) || {}
-			console.log(localDrops)
 
 			const _keyPair = KeyPair.fromString(paramSecretKey)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
@@ -141,6 +141,10 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				const metadata = JSON.parse(_drop.metadata)
 				if (metadata.id) drop_id = metadata.id
 			} catch (e) { }
+
+			if (drop_id === 'nearcon-opening-night') {
+				setBanner('https://cloudflare-ipfs.com/ipfs/bafybeiho223ltrbkzyd6omf6due7sjfqvayniv7tjw4je2f3eoldxljqvy')
+			}
 			
 			// redirect to existing ticket matching same id
 			if (localDrops[drop_id] && window.location.href.indexOf(localDrops[drop_id]) === -1) {
@@ -249,6 +253,9 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			<>
 				{
 					(!drop || !keyInfo) && <h4>Not a valid drop</h4>
+				}
+				{
+					banner && uses > 1 && <img onClick={() => window.open('https://goo.gl/maps/nF51QUjanUDp9AKG6', '_blank')} src={banner} />
 				}
 				{
 					metadata && keyInfo && <img id="media" src={metadata.media} />
