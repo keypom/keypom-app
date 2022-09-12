@@ -27,7 +27,7 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 			
 			const balance = await view('get_user_balance', { account_id: account.accountId })
 	
-			const drops = await view('get_drops_for_owner', { account_id: account.accountId, from_index: '0', limit: 5 })
+			const drops = await view('get_drops_for_owner', { account_id: account.accountId, from_index: '11', limit: 5 })
 
 			/// TODO this has been updated with the drop nonce
 			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys

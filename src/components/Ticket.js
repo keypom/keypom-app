@@ -120,6 +120,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 	const [banner, setBanner] = useState(null)
 	const [keyInfo, setKeyInfo] = useState({})
 	const [drop, setDrop] = useState({})
+	const [dropId, setDropId] = useState({})
 	const [claimed, setClaimed] = useState(!!get(CLAIMED))
 
 	const onMount = async () => {
@@ -141,6 +142,8 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				const metadata = JSON.parse(_drop.metadata)
 				if (metadata.id) drop_id = metadata.id
 			} catch (e) { }
+
+			setDropId(drop_id)
 
 			if (drop_id === 'nearcon-opening-night') {
 				setBanner('https://cloudflare-ipfs.com/ipfs/bafybeiho223ltrbkzyd6omf6due7sjfqvayniv7tjw4je2f3eoldxljqvy')
@@ -258,6 +261,12 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					banner && uses > 1 && <img onClick={() => window.open('https://goo.gl/maps/nF51QUjanUDp9AKG6', '_blank')} src={banner} />
 				}
 				{
+					uses === 2 && dropId === 'nearweek-party' && <div style={{ marginTop: 32, color: 'white' }}>
+						<p style={{ color: 'white' }}>Venue @ <a href="https://goo.gl/maps/1bATJSYiMJVfYAQQ8" target="_blank">Bica do Sapato</a> next to the Santa Apolonia Metro Station</p>
+						<p style={{ color: 'white' }}>Look for a big light sculpture marking the main entrance.</p>
+					</div>
+				}
+				{
 					metadata && keyInfo && <img id="media" src={metadata.media} />
 				}
 				{
@@ -329,7 +338,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				});
 			}} src={Keypom} />
 			<p>
-				😍 Keypom Launch Talk at <a href="https://proofofsound.splashthat.com/" target="_blank">NEARCON Proof of Sound Stage, Sep 12, 12:50pm - 1:10pm</a> 👀
+				😍 Keypom Launch Talk at DOOMSLUG STAGE 4.35pm Sep 12th Monday! 👀
 			</p>
 		</div>
 	</>

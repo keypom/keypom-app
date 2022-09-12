@@ -23,12 +23,18 @@ export const nftSeries = {
 			form: {
 				mint_id: 1,
 				media: '',
+
+				title: 'The JS Pizza',
+				description: 'Grab a piece of pizza to celebrate your work at the NEARCON IRL Hackathon! Don’t forget to get one for each team member. This collectible is your identification: save it to receive your travel stipend from NEAR.',
+
 				copies: 10,
 				royalty_receiver: '',
 				royalty_percent: 0,
 			},
 			valuesMap: {
 				media: 'metadata.media',
+				title: 'metadata.title',
+				description: 'metadata.description',
 				copies: 'metadata.copies',
 			},
 			number: ['mint_id', 'copies'],

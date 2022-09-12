@@ -158,12 +158,12 @@ const Create = ({ state, update, wallet }) => {
 
 					let args = {
 						public_keys: [],
-						deposit_per_use: parseNearAmount('0.02'),
-						metadata,
-						config: {
-							uses_per_key: customData.length,
-							on_claim_refund_deposit: true,
-						},
+						deposit_per_use: parseNearAmount('0.2'),
+						// metadata,
+						// config: {
+						// 	uses_per_key: customData.length,
+						// 	on_claim_refund_deposit: false,
+						// },
 						fc_data: {
 							methods: customData.map((data) => data.None ? null : [{
 								account_id_field: data.account_id_field,

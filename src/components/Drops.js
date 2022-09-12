@@ -79,7 +79,8 @@ const Drops = ({ state, update, contract, wallet }) => {
 						update('app.loading', true)
 						const keys = await genKeys(seedPhrase, drop.next_key_id, drop.drop_id)
 						update('app.loading', false)
-						const links = keys.map(({secretKey}) => `https://keypom.xyz/ticket/${secretKey}`)
+						const links = keys.map(({secretKey}) => `https://app.mynearwallet.com/linkdrop/nearcon.keypom.near/${secretKey}`)
+						// const links = keys.map(({secretKey}) => `https://keypom.xyz/ticket/${secretKey}`)
 						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>
 					{
