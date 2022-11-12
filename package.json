@@ -39,7 +39,7 @@
 		"build": "yarn static && parcel build src/index.html --public-url ./ --no-cache --no-source-maps",
 		"static": "rm -rf dist && mkdir dist && cp -a ./static/* ./dist",
 		"start": "yarn static && parcel src/index.html --open",
-		"mainnet": "yarn static && REACT_APP_NETWORK_ID=mainnet REACT_APP_CONTRACT_ID=nearcon.keypom.near parcel src/index.html --open",
+		"mainnet": "yarn static && REACT_APP_NETWORK_ID=mainnet REACT_APP_CONTRACT_ID=beta.keypom.near parcel src/index.html --open",
 		"fix": "eslint test/ --fix"
 	}
 }

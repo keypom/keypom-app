@@ -1,4 +1,4 @@
-const contractName = process.env.REACT_APP_CONTRACT_ID || 'nearcon.keypom.testnet';
+const contractName = process.env.REACT_APP_CONTRACT_ID || 'beta.keypom.testnet';
 
 console.log(process.env.REACT_APP_NETWORK_ID, process.env.REACT_APP_CONTRACT_ID)
 

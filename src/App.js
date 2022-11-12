@@ -58,6 +58,8 @@ const main = (path, Component, routeArgs) => {
 const App = () => {
 	const { state, dispatch, update } = useContext(appStore);
 
+	if (!state) return null
+
 	const { app, wallet, contract } = state
 	const { menu, loading, message } = app
 	const { pathname } = useLocation();

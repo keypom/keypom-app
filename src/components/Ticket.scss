@@ -1,5 +1,5 @@
 main.ticket {
-	margin: -16px 0 0 0;
+	margin: -32px 0 0 0;
 	padding-bottom: 64px;
 	text-align: center;
 	color: white;
@@ -9,13 +9,23 @@ main.ticket {
 		margin-top: 100px !important;
 	}
 
+	ol {
+		margin: auto;
+		text-align: left;
+		max-width: 500px;
+		li {
+			color: white;
+		}
+		margin-bottom: 32px;
+	}
+	
+
 	>button {
 		display: block;
 		background: black;
 		color: white;
 		border-color: white;
 		margin: 0 auto 32px auto !important;
-		max-width: 500px;
 		border-radius: 6px;
 	}
 
@@ -28,6 +38,7 @@ main.ticket {
 			0 0 8px 0 #ffffff66,
 			0 0 24px 0 #ffffff22,
 			0 0 32px 0 #ff00ff44;
+		background: white;
 	}
 
 	#qr-container {

@@ -134,7 +134,9 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			const localDrops = get(DROP_AND_SECRET_KEY) || {}
 
 			const _keyPair = KeyPair.fromString(paramSecretKey)
+			setKeyPair(_keyPair)
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
+			setDrop(_drop)
 
 			// use metadata.id if it exists (catch all for multiple drops per event)
 			let { drop_id } = _drop
@@ -157,17 +159,17 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 
 			set(DROP_AND_SECRET_KEY, { ...get(DROP_AND_SECRET_KEY), [drop_id]: paramSecretKey })
 
-			setKeyPair(_keyPair)
 			// console.log(_drop)
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
+			setKeyInfo(_keyInfo)
 			// console.log(_keyInfo)
-			const uses = _keyInfo.key_info.remaining_uses
-			if (uses === 3) {
-				try {
+			const remaining_uses = _keyInfo?.remaining_uses
+			if (remaining_uses === 3) {
 
+				try {
 					claimFn = async () => {
 						const keyInfoAgain = await view('get_key_information', { key: _keyPair.publicKey.toString() })
-						if (keyInfoAgain.key_info.remaining_uses === 3) {
+						if (keyInfoAgain.remaining_uses === 3) {
 							try {
 								const account = await getClaimAccount(_keyPair.secretKey)
 								const res = await call(account, 'claim', { account_id: `testnet`, expected_uses: 3 })
@@ -190,8 +192,8 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					let id = _drop.drop_id
 					// use metadata.id if it exists (catch all for multiple drops per event)
 					try {
+						console.log(_drop)
 						const metadata = JSON.parse(_drop.metadata)
-						console.log(metadata)
 						if (metadata.id) id = metadata.id
 					} catch (e) { }
 
@@ -202,9 +204,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				}
 			}
 
-			setKeyInfo(_keyInfo)
-			setDrop(_drop)
-
 			await addScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js')
 			
 			setTimeout(() => {
@@ -212,7 +211,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				if (container) container.style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
-			}, uses === 3 ? FIRST_CLAIM_TIMEOUT : 250)
+			}, remaining_uses === 3 ? FIRST_CLAIM_TIMEOUT : 250)
 
 		} catch (e) {
 			console.warn(e)
@@ -229,7 +228,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 	if (drop?.metadata) {
 		metadata = JSON.parse(drop.metadata)
 	}
-	const uses = keyInfo?.key_info?.remaining_uses
+	const remaining_uses = keyInfo?.remaining_uses
 
 	return <>
 
@@ -258,10 +257,10 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					(!drop || !keyInfo) && <h4>Not a valid drop</h4>
 				}
 				{
-					banner && uses > 1 && <img onClick={() => window.open('https://goo.gl/maps/nF51QUjanUDp9AKG6', '_blank')} src={banner} />
+					banner && remaining_uses > 1 && <img onClick={() => window.open('https://goo.gl/maps/nF51QUjanUDp9AKG6', '_blank')} src={banner} />
 				}
 				{
-					uses === 2 && dropId === 'nearweek-party' && <div style={{ marginTop: 32, color: 'white' }}>
+					remaining_uses === 2 && dropId === 'nearweek-party' && <div style={{ marginTop: 32, color: 'white' }}>
 						<p style={{ color: 'white' }}>Venue @ <a href="https://goo.gl/maps/1bATJSYiMJVfYAQQ8" target="_blank">Bica do Sapato</a> next to the Santa Apolonia Metro Station</p>
 						<p style={{ color: 'white' }}>Look for a big light sculpture marking the main entrance.</p>
 					</div>
@@ -270,7 +269,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					metadata && keyInfo && <img id="media" src={metadata.media} />
 				}
 				{
-					uses === 1 && <>
+					remaining_uses === 1 && <>
 						{
 							wallet.isSignedIn() ?
 								<button className="outline" onClick={async () => {
@@ -305,10 +304,15 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					</>
 				}
 				{
-					uses !== 1 && <div id="qr-container">
-						<p>This is your Ticket! Keep it Safe!</p>
+					remaining_uses !== 1 && <div id="qr-container">
+						<p>This is a DEMO Keypom ticket!</p>
+						<ol>
+							<li><s>Claim the ticket by clicking the link (flying Pomeranians)</s></li>
+							<li>Open the scanner app on your phone <a href="">{`${window.location.origin}/scanner`}</a></li>
+							<li>Scan your QR Code</li>
+							<li>RELOAD THIS PAGE to claim your NEAR Wallet and NFT</li>
+						</ol>
 						<div id="qr" ref={qr}></div>
-						<p className="small">(Will you be online? Screenshot This Now!)</p>
 					</div>
 				}
 			</>}
@@ -337,9 +341,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 					}
 				});
 			}} src={Keypom} />
-			<p>
-				😍 Keypom Launch Talk at DOOMSLUG STAGE 4.35pm Sep 12th Monday! 👀
-			</p>
 		</div>
 	</>
 

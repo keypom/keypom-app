@@ -22,7 +22,7 @@ const params = ['receiver_id', 'method_name', 'args', 'attached_deposit', 'accou
 // }
 const functionCall = {
 	None: false,
-	receiver_id: 'nearcon-beta-keypom-nfts.near',
+	receiver_id: 'keypom-beta-nfts.testnet',
 	method_name: 'nft_mint',
 	args: '',
 	attached_deposit: '0.015',
@@ -37,7 +37,7 @@ const Create = ({ state, update, wallet }) => {
 	const [customData, setCustomData] = useState([{
 		Keys: 0,
 		metadata: JSON.stringify({
-			media: 'https://cloudflare-ipfs.com/ipfs/bafybeih5sqn4rn2wo2me3clut4rxmamtzpaxjy734sfr76gwajlqettrf4', id: 'nearcon-opening-night',
+			media: 'https://cloudflare-ipfs.com/ipfs/bafybeicxyjkc6feovbz63ssr46yzbq4i3pifauhr32dwenmzhis5fopwny', id: 'keypom-beta',
 		}),
 		...functionCall,
 	}])
@@ -159,11 +159,11 @@ const Create = ({ state, update, wallet }) => {
 					let args = {
 						public_keys: [],
 						deposit_per_use: parseNearAmount('0.2'),
-						// metadata,
-						// config: {
-						// 	uses_per_key: customData.length,
-						// 	on_claim_refund_deposit: false,
-						// },
+						metadata,
+						config: {
+							uses_per_key: customData.length,
+							on_claim_refund_deposit: true,
+						},
 						fc_data: {
 							methods: customData.map((data) => data.None ? null : [{
 								account_id_field: data.account_id_field,

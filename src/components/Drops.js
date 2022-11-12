@@ -46,7 +46,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 	</>
 
 	if (which) {
-		const drop = drops.find((d) => d.drop_id === parseInt(which))
+		const drop = drops.find((d) => d.drop_id === which)
 		if (!drop) return <p>Can't find drop ID {which}</p>
 
 		return <>
@@ -79,9 +79,10 @@ const Drops = ({ state, update, contract, wallet }) => {
 						update('app.loading', true)
 						const keys = await genKeys(seedPhrase, drop.next_key_id, drop.drop_id)
 						update('app.loading', false)
-						const links = keys.map(({secretKey}) => `https://app.mynearwallet.com/linkdrop/nearcon.keypom.near/${secretKey}`)
-						// const links = keys.map(({secretKey}) => `https://keypom.xyz/ticket/${secretKey}`)
-						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
+						// const links = keys.map(({secretKey}) => `https://app.mynearwallet.com/linkdrop/${contractId}/${secretKey}`)
+						const links = keys.map(({secretKey}) => `${window.location.origin}/ticket/${secretKey}`)
+						console.log(links)
+						// file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>
 					{
 						drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
