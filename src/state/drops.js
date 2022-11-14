@@ -46,17 +46,18 @@ export const genKeys = async (seedPhrase, num, drop_id, nonce = 0) => {
 	return keys
 }
 
-export const matchKeys = async (seedPhrase, drop_id, keys, nonce = 0, limit = 50) => {
+export const matchKeys = async (seedPhrase, drop_id, keys) => {
 	const { secretKey } = parseSeedPhrase(seedPhrase)
 	const keyPairs = []
 	if (keys.length === 0) return keyPairs
-	for (let i = nonce; i < nonce + limit; i++) {
-		const hash = await hashBuf(`${secretKey}_${drop_id}_${i}`)
+	await Promise.all(keys.map(async (key) => {
+
+		console.log(key)
+		
+		const hash = await hashBuf(`${secretKey}_${drop_id}_${key.key_id}`)
 		const { secretKey: s } = generateSeedPhrase(hash)
 		const keyPair = KeyPair.fromString(s)
-		if (!keys.includes(keyPair.publicKey.toString())) continue
 		keyPairs.push(keyPair)
-		if (keyPairs.length === keys.length) break
-	}
+	}))
 	return keyPairs
 }

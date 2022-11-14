@@ -85,22 +85,22 @@ const Drops = ({ state, update, contract, wallet }) => {
 						// file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>
 					{
-						drop.keyPairs.map(({ publicKey, secretKey }) => <div key={publicKey}>
+						drop.keyPairs.map(({ publicKey, secretKey }) => <div className="key-row" key={publicKey}>
 							<div className="grid sm">
 								<div className="twelve columns">
 									<p>{secretKey.substring(0, 32)}</p>
 								</div>
 								<div>
-									<Link to={`/ticket/${secretKey}`}><button>Preview Drop</button></Link>
+									<Link to={`/ticket/${secretKey}`} target="_blank" rel="noopener noreferrer"><button>Preview Drop</button></Link>
 								</div>
-								<div>
+								{/* <div>
 									<button className="outline" onClick={async () => {
 										update('app.loading', true)
 										await claimDrop(wallet.accountId, secretKey)
 										await wallet.update()
 										update('app.loading', false)
 									}}>Claim Drop</button>
-								</div>
+								</div> */}
 							</div>
 						</div>)
 					}

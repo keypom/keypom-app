@@ -54,17 +54,14 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 					})(),
 					(async() => {
 						/// TODO fix this so it's checking the keys are valid before showing them to user
-						drop.keys = []
-						drop.keyPairs = []
-
-						// if (drop.next_key_id === 0) {
-						// 	drop.keys = []
-						// 	drop.keyPairs = []
-						// 	return
-						// }
-						// const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: (drop.next_key_id - 5).toString(), limit: Math.min(5, drop.next_key_id) })
-						// drop.keys = keys.map(({ pk }) => pk)
-						// drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, drop.keys)
+						if (drop.next_key_id === 0) {
+							drop.keys = []
+							drop.keyPairs = []
+							return
+						}
+						const keys = await view('get_keys_for_drop', { drop_id: drop.drop_id, from_index: '0', limit: 5 })
+						drop.keys = keys.map(({ pk }) => pk)
+						drop.keyPairs = await matchKeys(seedPhrase, drop.drop_id, keys)
 					})()
 				])
 			}))
