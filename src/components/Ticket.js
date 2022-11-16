@@ -117,7 +117,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 	const paramSecretKey = useParams().secretKey
 
 	const [keyPair, setKeyPair] = useState({})
-	const [banner, setBanner] = useState(null)
 	const [keyInfo, setKeyInfo] = useState({})
 	const [drop, setDrop] = useState({})
 	const [dropId, setDropId] = useState({})
@@ -131,10 +130,10 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 
 		update('app.loading', true)
 		try {
-			const localDrops = get(DROP_AND_SECRET_KEY) || {}
 
 			const _keyPair = KeyPair.fromString(paramSecretKey)
 			setKeyPair(_keyPair)
+
 			const _drop = await view('get_drop_information', { key: _keyPair.publicKey.toString() })
 			setDrop(_drop)
 
@@ -147,21 +146,12 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 
 			setDropId(drop_id)
 
-			if (drop_id === 'nearcon-opening-night') {
-				setBanner('https://cloudflare-ipfs.com/ipfs/bafybeiho223ltrbkzyd6omf6due7sjfqvayniv7tjw4je2f3eoldxljqvy')
-			}
-			
-			// redirect to existing ticket matching same id
-			if (localDrops[drop_id] && window.location.href.indexOf(localDrops[drop_id]) === -1) {
-				window.location.href = window.location.origin + '/ticket/' + localDrops[drop_id]
-				return null
-			}
-
-			set(DROP_AND_SECRET_KEY, { ...get(DROP_AND_SECRET_KEY), [drop_id]: paramSecretKey })
-
 			// console.log(_drop)
 			const _keyInfo = await view('get_key_information', { key: _keyPair.publicKey.toString() })
 			setKeyInfo(_keyInfo)
+
+			console.log(_drop, _keyInfo)
+
 			// console.log(_keyInfo)
 			const remaining_uses = _keyInfo?.remaining_uses
 			if (remaining_uses === 3) {
@@ -255,9 +245,6 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 			<>
 				{
 					(!drop || !keyInfo) && <h4>Not a valid drop</h4>
-				}
-				{
-					banner && remaining_uses > 1 && <img onClick={() => window.open('https://goo.gl/maps/nF51QUjanUDp9AKG6', '_blank')} src={banner} />
 				}
 				{
 					remaining_uses === 2 && dropId === 'nearweek-party' && <div style={{ marginTop: 32, color: 'white' }}>

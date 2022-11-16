@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { genKeys } from '../state/drops'
 import { call, view } from '../state/near'
 import { Form } from "./Form";
+import { hash } from "../utils/crypto"
 
 import dJSON from 'dirty-json';
  
 // output: {"test":"this is a test"}
-
 
 const types = ['Simple', 'FT Drop', 'NFT Drop', 'Custom Call']
 const params = ['receiver_id', 'method_name', 'args', 'attached_deposit', 'account_id_field', 'drop_id_field']
@@ -39,6 +39,7 @@ const Create = ({ state, update, wallet }) => {
 		metadata: JSON.stringify({
 			media: 'https://cloudflare-ipfs.com/ipfs/bafybeicxyjkc6feovbz63ssr46yzbq4i3pifauhr32dwenmzhis5fopwny', id: 'keypom-beta',
 		}),
+		password: '',
 		...functionCall,
 	}])
 
@@ -152,6 +153,7 @@ const Create = ({ state, update, wallet }) => {
 					const first = customData[0]
 					const numKeys = parseInt(first.Keys)
 					const metadata = first.metadata.length ? JSON.stringify(dJSON.parse(first.metadata)) : undefined
+					const { password } = first
 					delete first.Keys
 
 					update('app.loading', true)
@@ -162,9 +164,11 @@ const Create = ({ state, update, wallet }) => {
 						metadata,
 						config: {
 							uses_per_key: customData.length,
-							on_claim_refund_deposit: true,
+							usage: {
+								refund_deposit: true,
+							}
 						},
-						fc_data: {
+						fc: {
 							methods: customData.map((data) => data.None ? null : [{
 								account_id_field: data.account_id_field,
 								drop_id_field: data.drop_id_field,
@@ -187,9 +191,16 @@ const Create = ({ state, update, wallet }) => {
 						args = {
 							drop_id,
 							public_keys: keys.map(({ publicKey }) => publicKey.toString()),
+
+							// making tickets
+							passwords_per_use: password.length > 0
+							? await Promise.all(keys.map(async ({ publicKey }) => ([{
+								pw: await hash(await hash(password + publicKey.toString() + 2), 'hex'),
+								key_use: 2
+							}]))) : undefined
 						}
 
-						const res2 =await call(wallet, 'add_keys', args, '300000000000000')
+						const res2 = await call(wallet, 'add_keys', args, '300000000000000')
 						console.log(res2)
 
 					} catch (e) {

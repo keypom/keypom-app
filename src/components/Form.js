@@ -14,6 +14,11 @@ const genFields = (data, values, onChange) => {
 				onChange(k, e.target[/true|false/.test(v) ? 'checked' : 'value'])
 			}
 		}
+
+		// if (/password/gi.test(k)) {
+		// 	input.type = 'password'
+		// }
+
 		if (typeof v === 'number') {
 			input.type = 'number'
 		} else if (typeof v === 'boolean') {

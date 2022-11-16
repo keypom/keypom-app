@@ -51,9 +51,6 @@ export const matchKeys = async (seedPhrase, drop_id, keys) => {
 	const keyPairs = []
 	if (keys.length === 0) return keyPairs
 	await Promise.all(keys.map(async (key) => {
-
-		console.log(key)
-		
 		const hash = await hashBuf(`${secretKey}_${drop_id}_${key.key_id}`)
 		const { secretKey: s } = generateSeedPhrase(hash)
 		const keyPair = KeyPair.fromString(s)

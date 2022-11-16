@@ -3,20 +3,22 @@ import { QrReader } from 'react-qr-reader';
 import * as nearAPI from 'near-api-js';
 const { KeyPair } = nearAPI
 import { view, call, getClaimAccount } from '../state/near'
+import { hash } from '../utils/crypto'
 
 import './Scanner.scss'
 
 const claim = async (secretKey) => {
 	const keyPair = KeyPair.fromString(secretKey)
-	let keyInfo = await view('get_key_information', { key: keyPair.publicKey.toString() })
+	const publicKey = keyPair.publicKey.toString()
+	let keyInfo = await view('get_key_information', { key: publicKey })
 
-	if (keyInfo?.key_info?.remaining_uses === 1) return false
+	if (keyInfo?.remaining_uses === 1) return false
 	
 	const account = await getClaimAccount(keyPair.secretKey)
-	await call(account, 'claim', { account_id: `testnet` })
+	await call(account, 'claim', { account_id: `testnet`, password: await hash('test' + publicKey + 2) })
 	
-	keyInfo = await view('get_key_information', { key: keyPair.publicKey.toString() })
-	if (keyInfo?.key_info?.remaining_uses === 1) return true
+	keyInfo = await view('get_key_information', { key: publicKey })
+	if (keyInfo?.remaining_uses === 1) return true
 	
 	return false
 }
