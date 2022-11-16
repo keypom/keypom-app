@@ -195,8 +195,8 @@ const Create = ({ state, update, wallet }) => {
 							// making tickets
 							passwords_per_use: password.length > 0
 							? await Promise.all(keys.map(async ({ publicKey }) => ([{
-								pw: await hash(await hash(password + publicKey.toString() + 2), 'hex'),
-								key_use: 2
+								pw: await hash(await hash(password + publicKey.toString() + 1), 'hex'),
+								key_use: 1
 							}]))) : undefined
 						}
 

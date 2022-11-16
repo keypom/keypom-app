@@ -1,7 +1,21 @@
 main.scanner {
-	margin: 16px;
+	margin: 0px;
+	padding: 16px;
 	text-align: center;
 	background: black;
+	min-height: 100vh;
+
+	>section {
+		>div {
+			margin-left: -16px !important;
+			width: 100vw !important;
+			> video {
+				width: 100% !important;
+				height: auto !important;
+			}
+		}
+	}
+
 
 	p {
 		color: white;

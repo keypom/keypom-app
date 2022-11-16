@@ -162,7 +162,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 						if (keyInfoAgain.remaining_uses === 3) {
 							try {
 								const account = await getClaimAccount(_keyPair.secretKey)
-								const res = await call(account, 'claim', { account_id: `testnet`, expected_uses: 3 })
+								const res = await call(account, 'claim', { account_id: `testnet` })
 								if (res?.status?.SuccessValue !== '') {
 									window.location.reload()
 									window.location.href = window.location.href
@@ -201,7 +201,7 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 				if (container) container.style.display = 'block';
 				genQR(qr)
 				setTimeout(() => document.querySelector('.footer').style.display = 'block', 1000)
-			}, remaining_uses === 3 ? FIRST_CLAIM_TIMEOUT : 250)
+			}, remaining_uses === 3 ? FIRST_CLAIM_TIMEOUT : 500)
 
 		} catch (e) {
 			console.warn(e)
@@ -270,8 +270,8 @@ const Ticket = ({ dispatch, state, update, wallet }) => {
 											return
 										}
 										poms()
-										set(CLAIMED, true)
-										setClaimed(true)
+										// set(CLAIMED, true)
+										// setClaimed(true)
 									} catch (e) {
 										window.location.reload()
 										window.location.href = window.location.href

@@ -3,9 +3,12 @@ import { QrReader } from 'react-qr-reader';
 import * as nearAPI from 'near-api-js';
 const { KeyPair } = nearAPI
 import { view, call, getClaimAccount } from '../state/near'
+import { get, set } from '../utils/store'
 import { hash } from '../utils/crypto'
 
 import './Scanner.scss'
+
+const PASSWORD = '__PASSWORD'
 
 const claim = async (secretKey) => {
 	const keyPair = KeyPair.fromString(secretKey)
@@ -15,7 +18,11 @@ const claim = async (secretKey) => {
 	if (keyInfo?.remaining_uses === 1) return false
 	
 	const account = await getClaimAccount(keyPair.secretKey)
-	await call(account, 'claim', { account_id: `testnet`, password: await hash('test' + publicKey + 2) })
+	const password = get(PASSWORD)
+	await call(account, 'claim', {
+		account_id: `testnet`,
+		password: password ? await hash(password + publicKey + 1) : undefined
+	})
 	
 	keyInfo = await view('get_key_information', { key: publicKey })
 	if (keyInfo?.remaining_uses === 1) return true
@@ -23,12 +30,14 @@ const claim = async (secretKey) => {
 	return false
 }
 
-const Scanner = ({ state, update, wallet }) => {
+const Scanner = ({ state, update }) => {
 
 	const { loading } = state.app
 	const [valid, setValid] = useState(null);
 
 	const onMount = async () => {
+		set(PASSWORD, window.prompt('Update Password for Claiming?'))
+
 		setTimeout(() => document.body.classList.add('dark'), 10)
 		update('app.loading', false)
 	}
@@ -55,7 +64,6 @@ const Scanner = ({ state, update, wallet }) => {
 					console.info(error);
 				}
 			}}
-			style={{ width: '100%' }}
 		/>}
 
 		<div className="result">
