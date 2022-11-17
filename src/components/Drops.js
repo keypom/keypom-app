@@ -82,7 +82,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 						// const links = keys.map(({secretKey}) => `https://app.mynearwallet.com/linkdrop/${contractId}/${secretKey}`)
 						const links = keys.map(({secretKey}) => `${window.location.origin}/ticket/${secretKey}`)
 						console.log(links)
-						// file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
+						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>
 					{
 						drop.keyPairs.map(({ publicKey, secretKey }) => <div className="key-row" key={publicKey}>
