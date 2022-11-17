@@ -23,6 +23,9 @@ const claim = async (secretKey) => {
 		account_id: `testnet`,
 		password: password ? await hash(password + publicKey + 1) : undefined
 	})
+
+	// fast return from scanner, tx in flight
+	// if (keyInfo?.remaining_uses === 2) return true
 	
 	keyInfo = await view('get_key_information', { key: publicKey })
 	if (keyInfo?.remaining_uses === 1) return true
