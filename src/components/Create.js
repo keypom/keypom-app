@@ -1,9 +1,10 @@
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { useEffect, useState } from "react";
 import { genKeys } from '../state/drops'
-import { call, view } from '../state/near'
+import { call, contractId, view } from '../state/near'
 import { Form } from "./Form";
 import { hash } from "../utils/crypto"
+import { initKeypom, createDrop } from "keypom-js";
 
 import dJSON from 'dirty-json';
  
@@ -44,7 +45,10 @@ const Create = ({ state, update, wallet }) => {
 	}])
 
 	const onMount = async () => {
-
+		initKeypom({
+			network: 'testnet',
+			keypomContractId: contractId
+		})
 	}
 
 	useEffect(() => {
@@ -56,7 +60,7 @@ const Create = ({ state, update, wallet }) => {
 
 		{
 			types.map((t) => <button key={t}
-				className={type === t ? 'button-primary' : ''}
+				className={type === t ? 'button-primary' : 'outline'}
 				onClick={() => setType(t)}>
 				{t}
 			</button>)
@@ -71,30 +75,27 @@ const Create = ({ state, update, wallet }) => {
 					},
 					submit: async (values) => {
 						update('app.loading', true)
-						let args = {
-							public_keys: [],
-							balance: parseNearAmount(values.NEAR) || '1',
-						}
 						try {
-							const res = await call(wallet, 'create_drop', args)
-							console.log(res)
+							const dropId = Date.now().toString()
+							const keys = await genKeys(seedPhrase, parseInt(values.Keys), dropId)
 
-							const drop_id = parseInt(Buffer.from(res?.status?.SuccessValue, 'base64').toString(), 10)
-							const keys = await genKeys(seedPhrase, parseInt(values.Keys), drop_id)
-							args = {
-								drop_id,
-								public_keys: keys.map(({ publicKey }) => publicKey.toString()),
-							}
+							console.log(wallet)
 
-							const res2 = await call(wallet, 'add_keys', args)
-							console.log(res2)
+							createDrop({
+								wallet,
+								dropId,
+								publicKeys: keys.map(({ publicKey }) => publicKey.toString()),
+								depositPerUseYocto: parseNearAmount(values.NEAR) || '1',
+								hasBalance: true,
+							})
 
 						} catch (e) {
-							update('app.loading', false)
+							console.warn(e)
 							throw e
+						} finally {
+							await wallet.update()
+							update('app.loading', false)
 						}
-						await wallet.update()
-						update('app.loading', false)
 					}
 				}} />
 			</>

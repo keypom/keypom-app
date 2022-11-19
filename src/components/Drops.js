@@ -134,7 +134,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 			</div>)
 		}
 		<br/>
-		<Link to={'/create'}><button className="outline">Create a Drop</button></Link>
+		<Link to={'/create'}><button>Create a Drop</button></Link>
 	</>
 
 }

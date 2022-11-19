@@ -6,8 +6,6 @@ import {
 	useSearchParams,
 } from "react-router-dom";
 
-import anime from 'animejs/lib/anime.es.js';
-import Keypom from './img/keypom-small.png'
 import { appStore, onAppMount } from './state/app';
 import { initNear } from './state/near';
 /// all
@@ -78,35 +76,6 @@ const App = () => {
 		dispatch, state, update, wallet, contract
 	}
 
-	if (pathname === '/' && search.get('v') !== '42') {
-		return <div className='footer'>
-			<img onClick={({ target }) => {
-				anime({
-					targets: target,
-					duration: 0,
-					scale: 1,
-					complete: () => {
-						anime({
-							targets: target,
-							scale: 4,
-							easing: 'easeOutCubic',
-							duration: 150,
-							complete: () => {
-								anime({
-									targets: target,
-									scale: 1,
-									easing: 'easeInCubic',
-									duration: 150,
-								});
-							}
-						});
-					}
-				});
-			}} src={Keypom} />
-			<p>Keypom is lit!</p>
-		</div>
-	}
-
 	/// TODO switch to switch
 	if (/claim|ticket|scanner|distro/.test(pathname)) {
 		if (/claim/.test(pathname)) return alt(loading, message, "/claim/:secretKey", Claim, routeArgs)
@@ -142,12 +111,7 @@ const App = () => {
 					/* Public Paths */
 					<main>
 						<Routes>
-							<Route path="/" element={
-								<>
-									<p>Please sign in to get started</p>
-									<button className="outline" onClick={() => wallet.signIn()}>Sign In</button>
-								</>
-							} />
+							{ main('/', Home, routeArgs)}
 						</Routes>
 					</main>
 			}
@@ -158,3 +122,8 @@ const App = () => {
 };
 
 export default App;
+
+
+
+ 
+

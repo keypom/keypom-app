@@ -81,7 +81,7 @@ const Account = ({ update, wallet, contract }) => {
 			appData?.seedPhrase ?
 				<div>
 					<button className="outline" onClick={() => {
-						file('ProxyAppData.json', JSON.stringify(appData))
+						file(`${wallet.accountId}.keypom.json`, JSON.stringify(appData))
 					}}>Export App Data</button>
 					<ImportAppData {...{ update, wallet }} />
 					<button className="outline" onClick={() => {

@@ -12,6 +12,7 @@ const Links = ({ update, wallet }) => {
 		{/* <Link onClick={hideMenu} to="/about">About</Link> */}
 		{
 			wallet.isSignedIn() ? <>
+				<Link onClick={hideMenu} to="/">Home</Link>
 				<Link onClick={hideMenu} to="/drops">Drops</Link>
 				<Link onClick={hideMenu} to="/contracts">Contracts</Link>
 				<Link onClick={hideMenu} to="/account">Account</Link>
@@ -29,7 +30,7 @@ const Header = ({ pathname, menu, wallet, update }) => {
 	return <header>
 		<div>
 			<p>
-				Keypom { len > 1 ? '-' : ''}
+				Keypom { pathname.length > 1 ? '-' : ''}
 				{
 					pathname.split('/').map((str, i) => <span key={str + i}>
 						{

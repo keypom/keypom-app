@@ -96,6 +96,11 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 	selector.accountId = account.accountId
 	selector.functionCall = _functionCall
 	selector.viewFunction = viewFunction
+	try {
+		selector.wallet = await selector.wallet()
+	} catch(e) {}
+	selector.signAndSendTransaction = selector.wallet.signAndSendTransaction
+	selector.signAndSendTransactions = selector.wallet.signAndSendTransactions
 	/// updates the account re: the app contract
 	if (hasUpdate) {
 		selector.update = updateAccount
