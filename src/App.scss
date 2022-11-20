@@ -82,6 +82,10 @@ main {
     }
 }
 
+button.outline:hover {
+    background-color: var(--primary-focus);
+}
+
 .spacer {
     margin-bottom: 16px;
 }
@@ -100,11 +104,14 @@ main {
 }
 
 /// not mobile
-@media only screen and (min-device-width: 550px) {
+@media only screen and (min-width: 768px) {
     .columns:nth-child(odd) {
         margin-left: 0;
     }
     main {
-        margin-left: 256px;
+        // margin-left: 256px;
+        max-width: 768px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }

@@ -7,7 +7,7 @@ const Home = ({ wallet }) => {
 
 	return <div>
 
-		<h2>Woof! Woof! Beta Warning</h2>
+		<center><h2>Woof! Woof! Beta Warning</h2></center>
 		<p>The Keypom App is still in active beta and things may break.</p>
 		<p>The app is currently ONLY available on testnet</p>
 		<div className='footer'>

@@ -4,7 +4,7 @@ import { genKeys } from '../state/drops'
 import { call, contractId, view } from '../state/near'
 import { Form } from "./Form";
 import { hash } from "../utils/crypto"
-import { initKeypom, createDrop } from "keypom-js";
+import { createDrop } from "keypom-js";
 
 import dJSON from 'dirty-json';
  
@@ -31,6 +31,12 @@ const functionCall = {
 	drop_id_field: 'mint_id',
 }
 
+const tokenMap = {
+	'USDC (testnet.ref.finance)': 'usdc.fakes.testnet',
+	'USDT.e (testnet.ref.finance': 'usdt.fakes.testnet',
+	'DAI (testnet.ref.finance)': 'dai.fakes.testnet'
+}
+
 const Create = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
@@ -45,10 +51,6 @@ const Create = ({ state, update, wallet }) => {
 	}])
 
 	const onMount = async () => {
-		initKeypom({
-			network: 'testnet',
-			keypomContractId: contractId
-		})
 	}
 
 	useEffect(() => {
@@ -79,8 +81,6 @@ const Create = ({ state, update, wallet }) => {
 							const dropId = Date.now().toString()
 							const keys = await genKeys(seedPhrase, parseInt(values.Keys), dropId)
 
-							console.log(wallet)
-
 							createDrop({
 								wallet,
 								dropId,
@@ -100,6 +100,51 @@ const Create = ({ state, update, wallet }) => {
 				}} />
 			</>
 		}
+
+{
+			type === 'FT Drop' && <>
+				<Form {...{
+					data: {
+						Keys: 0,
+						NEAR: 0,
+						'FT Contract ID': [
+							'USDC (testnet.ref.finance)',
+							'USDT.e (testnet.ref.finance',
+							'DAI (testnet.ref.finance)'
+						],
+						'FT Amount': 0
+					},
+					submit: async (values) => {
+
+						try {
+							const dropId = Date.now().toString()
+							const keys = await genKeys(seedPhrase, parseInt(values.Keys), dropId)
+							const ftData = {
+								contractId: tokenMap[values['FT Contract ID']],
+								senderId: wallet.accountId,
+								balancePerUse: values['FT Amount']
+							}
+							createDrop({
+								wallet,
+								dropId,
+								publicKeys: keys.map(({ publicKey }) => publicKey.toString()),
+								depositPerUseYocto: parseNearAmount(values.NEAR) || '1',
+								hasBalance: true,
+								ftData,
+							})
+
+						} catch (e) {
+							console.warn(e)
+							throw e
+						} finally {
+							await wallet.update()
+							update('app.loading', false)
+						}
+					}
+				}} />
+			</>
+		}
+
 
 		{
 			type === 'Custom Call' && <>
@@ -215,8 +260,6 @@ const Create = ({ state, update, wallet }) => {
 				}}>Submit</button>
 			</>
 		}
-
-		{(type === 'FT Drop' || type === 'NFT Drop') && <p>Coming Soon!</p>}
 
 	</>
 

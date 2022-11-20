@@ -81,7 +81,7 @@ main.ticket {
 	}
 }
 
-@media only screen and (min-device-width: 550px) {
+@media only screen and (min-width: 768px) {
 	main.ticket {
 		img {
 			max-width: 500px;

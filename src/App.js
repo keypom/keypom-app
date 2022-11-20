@@ -89,7 +89,7 @@ const App = () => {
 			{loading && <Loading />}
 			<Suspense fallback={null}>
 				<Header {...{ pathname, menu, wallet, update }} />
-				<Sidebar {...{ pathname, wallet, update }} />
+				{/* <Sidebar {...{ pathname, wallet, update }} /> */}
 			</Suspense>
 			{
 				wallet.isSignedIn() ?

@@ -3,12 +3,12 @@ const { KeyPair } = nearAPI
 import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { near, connection, networkId, keyStore, accountSuffix, contractId } from '../../utils/near-utils';
 export { accountSuffix, networkId, contractId, walletUrl } from '../../utils/near-utils';
-import getConfig from '../../utils/config';
 import { matchKeys } from './drops'
-const { contractId: _contractId } = getConfig();
 import { parseSeedPhrase } from 'near-seed-phrase'
 import { getAppData } from './app';
 import { getSelector, getAccount, viewFunction, functionCall as _functionCall } from '../utils/wallet-selector-compat'
+
+import { initKeypom } from "keypom-js";
 
 export const gas = '100000000000000';
 
@@ -17,6 +17,11 @@ const dropTypeMap = {
 }
 
 export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
+
+	initKeypom({
+		near,
+		keypomContractId: contractId
+	})
 
 	let updateAccount
 	if (hasUpdate) {
@@ -29,6 +34,7 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 	
 			const drops = await view('get_drops_for_owner', { account_id: account.accountId })
 
+			console.log(drops)
 			/// TODO this has been updated with the drop nonce
 			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
 			// should work even when you paginate, drop.keyPairs stays synced with drop.keys

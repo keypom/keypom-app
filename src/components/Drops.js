@@ -22,6 +22,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 	}, [which])
 
 	const handleRemoveDrop = async (drop_id) => {
+		if (!window.confirm('Delete this drop and all keys?')) return
 		update('app.loading', true)
 		try {
 			const res = await wallet.functionCall({
