@@ -12,10 +12,6 @@ import { initKeypom } from "keypom-js";
 
 export const gas = '100000000000000';
 
-const dropTypeMap = {
-	FC: 'Function Call Drop'
-}
-
 export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 
 	initKeypom({
@@ -47,7 +43,6 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 
 			/// going to mutate the drop directly, wait for all updates then execute after
 			await Promise.all(drops.map(async (drop) => {
-				drop.drop_type_label = typeof drop.drop_type === 'object' ? dropTypeMap[Object.keys(drop.drop_type)] : drop.drop_type
 				
 				await Promise.all([
 					(async() => {

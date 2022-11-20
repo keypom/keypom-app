@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { contractId } from '../state/near'
 import { addKeys, claimDrop, genKeys } from '../state/drops'
+import { deleteKeys } from "keypom-js";
 
 const Drops = ({ state, update, contract, wallet }) => {
 
@@ -25,20 +26,24 @@ const Drops = ({ state, update, contract, wallet }) => {
 		if (!window.confirm('Delete this drop and all keys?')) return
 		update('app.loading', true)
 		try {
-			const res = await wallet.functionCall({
-				contractId,
-				methodName: 'delete_keys',
-				args: {
-					drop_id
-				},
-				gas: '100000000000000',
+			await deleteKeys({
+				wallet,
+				drop: drop_id,
 			})
+			// const res = await wallet.functionCall({
+			// 	contractId,
+			// 	methodName: 'delete_keys',
+			// 	args: {
+			// 		drop_id
+			// 	},
+			// 	gas: '100000000000000',
+			// })
 		} catch (e) {
-			update('app.loading', false)
 			throw e
+		} finally {
+			update('app.loading', false)
 		}
 		await wallet.update()
-		update('app.loading', false)
 	}
 
 	if (!drops?.length) return <>
@@ -81,7 +86,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 						const keys = await genKeys(seedPhrase, drop.next_key_id, drop.drop_id)
 						update('app.loading', false)
 						// const links = keys.map(({secretKey}) => `https://app.mynearwallet.com/linkdrop/${contractId}/${secretKey}`)
-						const links = keys.map(({secretKey}) => `${window.location.origin}/ticket/${secretKey}`)
+						const links = keys.map(({ secretKey }) => `${window.location.origin}/ticket/${secretKey}`)
 						console.log(links)
 						file(`Drop ID ${drop.drop_id} Links.csv`, links.join('\r\n'))
 					}}>Download All Ticket Links</button>
@@ -115,26 +120,30 @@ const Drops = ({ state, update, contract, wallet }) => {
 		<h4>Your Drops</h4>
 
 		{
-			drops.map(({ drop_id, balance, drop_type_label }) => <div key={drop_id}>
-				<div className="grid sm">
-					<div>
-						<p>Drop ID: {drop_id}</p>
-					</div>
-					<div>
-						<p>{drop_type_label}</p>
-					</div>
-					<div>
-						<Link to={`/drops/${drop_id}`}>
-							<button className="outline">Details</button>
-						</Link>
-					</div>
-					<div>
-						<button className="outline" onClick={() => handleRemoveDrop(drop_id)}>Remove Drop</button>
+			drops.map((drop) => {
+				const { drop_id, balance, drop_type_label } = drop
+
+				return <div key={drop_id}>
+					<div className="grid sm">
+						<div>
+							<p>Drop ID: {drop_id}</p>
+						</div>
+						<div>
+							<p>{drop_type_label}</p>
+						</div>
+						<div>
+							<Link to={`/drops/${drop_id}`}>
+								<button className="outline">Details</button>
+							</Link>
+						</div>
+						<div>
+							<button className="outline" onClick={() => handleRemoveDrop(drop)}>Remove Drop</button>
+						</div>
 					</div>
 				</div>
-			</div>)
+			})
 		}
-		<br/>
+		<br />
 		<Link to={'/create'}><button>Create a Drop</button></Link>
 	</>
 

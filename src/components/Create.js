@@ -7,8 +7,6 @@ import { hash } from "../utils/crypto"
 import { createDrop } from "keypom-js";
 
 import dJSON from 'dirty-json';
- 
-// output: {"test":"this is a test"}
 
 const types = ['Simple', 'FT Drop', 'NFT Drop', 'Custom Call']
 const params = ['receiver_id', 'method_name', 'args', 'attached_deposit', 'account_id_field', 'drop_id_field']
