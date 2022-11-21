@@ -53,7 +53,7 @@ const genFields = (data, values, onChange) => {
 	})
 }
 
-export const Form = ({ data, onChange, submit, submitLabel }) => {
+export const Form = ({ data, onChange, submit, submitLabel, BeforeSubmit }) => {
 
 	const [values, setValues] = useState({ ...data })
 	const onValueChange = (k, v) => {
@@ -66,6 +66,9 @@ export const Form = ({ data, onChange, submit, submitLabel }) => {
 		<div className="row">
 			{genFields(data, values, onValueChange)}
 		</div>
+		{ BeforeSubmit && <BeforeSubmit />}
+		<br/>
+		<br/>
 		{ submit && <button onClick={() => submit(values)}>{ submitLabel ? submitLabel : 'Submit' }</button> }
 	</>
 }

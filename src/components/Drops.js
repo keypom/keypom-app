@@ -30,14 +30,6 @@ const Drops = ({ state, update, contract, wallet }) => {
 				wallet,
 				drop: drop_id,
 			})
-			// const res = await wallet.functionCall({
-			// 	contractId,
-			// 	methodName: 'delete_keys',
-			// 	args: {
-			// 		drop_id
-			// 	},
-			// 	gas: '100000000000000',
-			// })
 		} catch (e) {
 			throw e
 		} finally {

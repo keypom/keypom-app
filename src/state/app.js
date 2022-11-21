@@ -17,6 +17,7 @@ const initialState = {
 		isSignedIn: () => false
 	},
 	contract: {},
+	nfts: null,
 };
 
 export const { appStore, AppProvider } = State(initialState, 'app');
