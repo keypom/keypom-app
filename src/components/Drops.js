@@ -5,9 +5,8 @@ import { file } from '../utils/store'
 import {
 	Link, useParams,
 } from "react-router-dom";
-import { contractId } from '../state/near'
-import { addKeys, claimDrop, genKeys } from '../state/drops'
-import { deleteKeys } from "keypom-js";
+import { genKeys } from '../state/drops'
+import { addKeys, deleteKeys } from "keypom-js";
 
 const Drops = ({ state, update, contract, wallet }) => {
 
@@ -59,10 +58,25 @@ const Drops = ({ state, update, contract, wallet }) => {
 							alert('Please enter a number between 1-100')
 							return update('app.loading', false)
 						}
-						const res = await addKeys(seedPhrase, wallet, drop, parseInt(num))
-						console.log(res)
-						await wallet.update()
-						update('app.loading', false)
+
+						/// TODO add warning about sending FTs and prompt for NFT token IDs (complicated)
+
+						try {
+							const keys = await genKeys(seedPhrase, parsedNum, drop.drop_id, drop.next_key_id)
+
+							await addKeys({
+								wallet,
+								drop,
+								publicKeys: keys.map(({ publicKey }) => publicKey.toString()),
+								hasBalance: true,
+							})
+						} catch(e) {
+							console.warn(e)
+							throw e
+						} finally {
+							await wallet.update()
+							update('app.loading', false)
+						}
 					}}>Add Keys</button>
 				</div>
 				<div>

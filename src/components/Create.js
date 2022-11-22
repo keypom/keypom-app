@@ -1,5 +1,6 @@
 import { parseNearAmount } from "near-api-js/lib/utils/format";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { genKeys } from '../state/drops'
 import { call, contractId, view, viewMethod } from '../state/near'
 import { Form } from "./Form";
@@ -42,6 +43,9 @@ const tokenMap = {
 const Create = ({ state, update, wallet }) => {
 
 	const { seedPhrase } = state.app?.data
+
+	const navigate = useNavigate()
+
 	const [type, setType] = useState('Simple')
 	const [curNFT, setCurNFT] = useState()
 	const [dataNFT, setDataNFT] = useState()
@@ -94,8 +98,6 @@ const Create = ({ state, update, wallet }) => {
 		onNFT()
 	}, [curNFT])
 
-	console.log(curNFT, dataNFT)
-
 	return <>
 		<h4>Create Drop</h4>
 
@@ -120,19 +122,19 @@ const Create = ({ state, update, wallet }) => {
 							const dropId = Date.now().toString()
 							const keys = await genKeys(seedPhrase, parseInt(values.Keys), dropId)
 
-							createDrop({
+							await createDrop({
 								wallet,
 								dropId,
 								publicKeys: keys.map(({ publicKey }) => publicKey.toString()),
 								depositPerUseYocto: parseNearAmount(values.NEAR) || '1',
 								hasBalance: true,
 							})
-
 						} catch (e) {
 							console.warn(e)
 							throw e
 						} finally {
 							await wallet.update()
+							navigate('/drops')
 							update('app.loading', false)
 						}
 					}
@@ -219,7 +221,7 @@ const Create = ({ state, update, wallet }) => {
 												/>
 											</>
 											:
-											<p>No token selected</p>
+											<p>You don't own any NFTs for this contract</p>
 									}
 								</>,
 								submit: async (values) => {
@@ -233,7 +235,7 @@ const Create = ({ state, update, wallet }) => {
 											senderId: wallet.accountId,
 										}
 										if (nftData.tokenIds[0] === 'No Tokens') nftData.tokenIds = [dataNFT?.curToken.token_id]
-								
+
 										createDrop({
 											wallet,
 											dropId,

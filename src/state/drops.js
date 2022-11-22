@@ -5,23 +5,6 @@ import { gas, contractId, getClaimAccount } from './near'
 
 const hashBuf = (str) => crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
 
-export const addKeys = async (seedPhrase, account, drop, num) => {
-	const { drop_id } = drop
-
-	const keys = await genKeys(seedPhrase, num, drop_id, drop.next_key_id)
-	const args = {
-		drop_id,
-		public_keys: keys.map(({ publicKey }) => publicKey.toString()),
-	}
-	const res = await account.functionCall({
-		contractId,
-		methodName: 'add_keys',
-		args,
-		gas: '300000000000000',
-	})
-	return res
-}
-
 export const claimDrop = async (accountId, secretKey) => {
 	const claimAccount = getClaimAccount(secretKey)
 	const res = await claimAccount.functionCall({
