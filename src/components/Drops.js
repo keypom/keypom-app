@@ -1,9 +1,8 @@
-import { formatNearAmount } from "near-api-js/lib/utils/format";
 import { useEffect } from "react";
 import { file } from '../utils/store'
 
 import {
-	Link, useParams,
+	Link, useParams, useNavigate,
 } from "react-router-dom";
 import { genKeys } from '../state/drops'
 import { addKeys, deleteKeys } from "keypom-js";
@@ -13,6 +12,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 	const { seedPhrase } = state.app.data
 	const { drops } = contract
 	const { which } = useParams()
+	const navigate = useNavigate();
 
 	const onMount = async () => {
 
@@ -21,20 +21,21 @@ const Drops = ({ state, update, contract, wallet }) => {
 		onMount()
 	}, [which])
 
-	const handleRemoveDrop = async (drop_id) => {
+	const handleRemoveDrop = async (drop) => {
 		if (!window.confirm('Delete this drop and all keys?')) return
 		update('app.loading', true)
 		try {
 			await deleteKeys({
 				wallet,
-				drop: drop_id,
+				drop,
 			})
 		} catch (e) {
 			throw e
 		} finally {
+			await wallet.update()
+			navigate('/drops')
 			update('app.loading', false)
 		}
-		await wallet.update()
 	}
 
 	if (!drops?.length) return <>
@@ -80,7 +81,7 @@ const Drops = ({ state, update, contract, wallet }) => {
 					}}>Add Keys</button>
 				</div>
 				<div>
-					<button className="outline" onClick={() => handleRemoveDrop(drop.drop_id)}>Remove Drop</button>
+					<button className="outline" onClick={() => handleRemoveDrop(drop)}>Remove Drop</button>
 				</div>
 			</div>
 			{
