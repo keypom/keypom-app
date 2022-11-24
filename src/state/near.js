@@ -30,7 +30,8 @@ export const initNear = (hasUpdate = true) => async ({ update, getState }) => {
 	
 			const drops = await view('get_drops_for_owner', { account_id: account.accountId })
 
-			console.log(drops)
+			console.log('DROPS', drops)
+			console.log('REGISTERED USES', drops.map(({registered_uses}) => registered_uses))
 			/// TODO this has been updated with the drop nonce
 			// TODO make this a key matching algo that ensures 1-1 keyPair generation for the drop keys
 			// should work even when you paginate, drop.keyPairs stays synced with drop.keys
